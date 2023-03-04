@@ -1,0 +1,45 @@
+@media (min-width: 992px) and (max-width: 1281px) { 
+    #qa_menu {
+        display: none;
+    } 
+}
+@media (max-width: 1500px) {
+    .form_right_alg{padding-right: 20rem;}
+}
+
+@media (max-width: 1400px) {
+    .td_email{width: 150px;}
+    .tb_tns_id_md span{width: 110px;}
+    .r_fn_12{font-size: 12px;}
+    .table_overflow td{overflow: hidden;text-overflow: ellipsis;white-space: nowrap;}
+}
+
+
+@media (max-width: 1300px) {
+    .form_right_alg{padding-right: 5rem;}
+    .tb_tns_id span{width: 150px;}
+    .td_email{width: 100px;}
+}
+
+@media (max-width: 992px) {
+    .retain_form {
+        float: none;
+        margin: 0 auto;
+        padding-bottom: 1rem;
+        padding-top: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .ggl_app{display: none;}
+    .responsive_error{display: block;}
+    .error_col {margin: 8rem 8rem;}
+}
+@media (max-width: 480px) {
+    .ep_logo{width: 150px;}
+    .error_col .ep_icon {width: 200px;}
+    .error_body{padding: 0rem 2rem;}
+    .error_col h2 {font-size: 20px;}
+    .error_col p{font-size: 16px;} 
+    .error_col {margin: 8rem 2rem;}
+}   

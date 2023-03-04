@@ -1,0 +1,44 @@
+.label {
+  font-size: 12px;
+}
+
+.tabCard {
+  transition: transform 0.5s, box-shadow 1s;
+  cursor: pointer;
+  text-decoration: none;
+
+  color: white;
+}
+
+/* // rgba(0, 140, 255, 0.966) */
+/* rgb(56, 142, 60); */
+
+.tabCard:hover {
+  color: #ffb74d;
+  transform: scale(1.02) perspective(0px);
+  box-shadow: 2px 3px 3px rgb(79, 88, 100);
+}
+
+.tabCard:active {
+  color: #ffb74d;
+  transform: scale(1.02) perspective(0px);
+  box-shadow: 2px 3px 3px rgb(79, 88, 100);
+}
+
+.active {
+  color: #ffb74d !important;
+  transform: scale(1.02) perspective(0px);
+  box-shadow: 2px 3px 3px rgb(79, 88, 100) !important;
+}
+
+.tabCard:hover {
+  color: #ffb74d;
+  transform: scale(1.02) perspective(0px);
+  box-shadow: 2px 3px 3px rgb(79, 88, 100);
+}
+
+.tabCard:active {
+  color: #ffb74d;
+  transform: scale(1.02) perspective(0px);
+  box-shadow: 2px 3px 3px rgb(79, 88, 100);
+}

@@ -1,0 +1,17 @@
+.notificationHeader {
+  text-align: left;
+  padding-left: 15px;
+}
+
+.notificationHeaderIcon {
+  margin-right: 10px;
+  float: right;
+  cursor: pointer;
+  transition: transform 0.5s, box-shadow 1s;
+}
+
+.notificationHeaderIcon:hover {
+  transform: scale(1.5) perspective(0px);
+  /* box-shadow: 2px 3px 3px rgba(252, 176, 252, 0.973); */
+  
+}

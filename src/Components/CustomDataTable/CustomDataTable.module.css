@@ -1,0 +1,16 @@
+.root {
+  background-color: white !important;
+}
+
+.cell:focus {
+  outline: none !important;
+}
+
+/* .columnHeader {
+  background-color: white !important;
+} */
+
+.columnHeader:focus {
+  outline: none !important;
+  color: rgba(0, 140, 255, 0.966);
+}

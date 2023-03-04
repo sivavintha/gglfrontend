@@ -1,0 +1,84 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.input-label {
+  font-size: 14px !important;
+}
+
+.tab-indicator {
+  height: 4px !important;
+  background-color: #fff !important;
+}
+
+.iAgree-label {
+  font-size: 12px !important;
+}
+
+.fc .fc-button-primary {
+  background-color: #ffb74d !important;
+  border-color: #ffb74d !important;
+}
+.fc .fc-button-primary:disabled {
+  /* not DRY */
+  color: #fff !important;
+
+  background-color: #ffb74d !important;
+
+  border-color: #ffb74d !important;
+}
+.fc .fc-button-primary:focus {
+  box-shadow: 0 0 0 0.2rem #ffd18c !important;
+}
+.fc .fc-button-primary:not(:disabled):active,
+.fc .fc-button-primary:not(:disabled).fc-button-active {
+  color: #fff !important;
+
+  background-color: #eeb766 !important;
+
+  border-color: #eeb766 !important;
+}
+.fc .fc-button-primary:not(:disabled):active:focus,
+.fc .fc-button-primary:not(:disabled).fc-button-active:focus {
+  box-shadow: 0 0 0 0.2rem #ffd18c !important;
+}
+
+.fc .fc-toolbar-title {
+  font-size: 1.5em !important;
+  text-transform: uppercase !important;
+}

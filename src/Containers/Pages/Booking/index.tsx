@@ -78,7 +78,7 @@ const BookingList: React.FC = () => {
 
   const editBooking = (id: string) => {
     setEditBookingId(id);
-    navigate("/master/addbooking", { state: { id: id } });
+    navigate("/addbooking", { state: { id: id } });
   };
 
   const viewBooking = (id: string) => {
@@ -96,6 +96,22 @@ const BookingList: React.FC = () => {
     );
   };
 
+  const shipperName = (params: any) => {
+    return params.row.shipper ? params.row.shipper.name : "";
+  };
+
+  const consigneeName = (params: any) => {
+    return params.row.consignee ? params.row.consignee.name : "";
+  };
+
+  const lineName = (params: any) => {
+    return params.row.line ? params.row.line.name : "";
+  };
+
+  const overseasAgentName = (params: any) => {
+    return params.row.overseasAgent ? params.row.overseasAgent.name : "";
+  };
+
   const BookingColumn = [
     {
       field: "bookingNo",
@@ -106,21 +122,25 @@ const BookingList: React.FC = () => {
       field: "shipper",
       headerName: "Shipper",
       flex: 1,
+      valueGetter: shipperName,
     },
     {
       field: "consignee",
       headerName: "Consignee",
       flex: 1,
+      valueGetter: consigneeName,
     },
     {
       field: "line",
       headerName: "Line",
       flex: 1,
+      valueGetter: lineName,
     },
     {
       field: "overseasAgent",
       headerName: "Overseas Agent",
       flex: 1,
+      valueGetter: overseasAgentName,
     },
     { field: "blNo", headerName: "BL No", flex: 1 },
     { field: "mblTerms", headerName: "MBL Terms", flex: 1 },

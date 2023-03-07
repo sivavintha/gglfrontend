@@ -130,7 +130,7 @@ const MainRouter = () => (
       />
 
       <Route
-        path="/master/addbank"
+        path="/addbooking"
         element={
           <Layout>
             <AddBooking />

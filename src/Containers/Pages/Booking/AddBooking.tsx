@@ -36,26 +36,6 @@ interface IAddBooking {
 }
 
 const AddBooking: React.FC<IAddBooking> = ({ id }) => {
-  const DEFAULT_FORM_VALUES = {
-    shipper: "",
-    consignee: "",
-    noOfPackages: 0,
-    grossWt:0,
-    netWt:0,
-    cbm:0
-  };
-
-  const {
-    register,
-    handleSubmit,
-    control,
-    formState: { errors },
-    setValue,
-    reset,
-  } = useForm<any>({
-    defaultValues: DEFAULT_FORM_VALUES,
-  });
-
   const dispatch = useAppDispatch();
   const location = useLocation();
   const newState = location.state as IAddBooking;
@@ -64,6 +44,10 @@ const AddBooking: React.FC<IAddBooking> = ({ id }) => {
   const currentBooking = useAppSelector(
     (state) => state.booking.currentBooking
   );
+  const currentProfitCenter = useAppSelector(
+    (state) => state.profitCenter.currentProfitCenter
+  );
+  const currentFyear = useAppSelector((state) => state.fyear.currentFyear);
   const customerData = useAppSelector(
     (state) => state.customerVendor.customers
   );
@@ -101,6 +85,31 @@ const AddBooking: React.FC<IAddBooking> = ({ id }) => {
 
   const currentStatus = useAppSelector((state) => state.booking.status);
 
+  const DEFAULT_FORM_VALUES = {
+    noOfPackages: 0,
+    grossWt: 0,
+    netWt: 0,
+    cbm: 0,
+    freight: "SFD",
+    operation: "EXPORT",
+    shipmentType: "FCL",
+
+    shipper:
+      shipperData && shipperData.length > 0 ? shipperData[0] : { name: "" },
+  };
+
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors },
+    setValue,
+    reset,
+  } = useForm<any>({
+    defaultValues: DEFAULT_FORM_VALUES,
+  });
+  const onError = (errors: any, e: any) => console.log(errors, e);
+
   React.useEffect(() => {
     dispatch(getCustomerVendors("CUSTOMER", false));
     dispatch(getVendors("VENDOR", false));
@@ -110,11 +119,7 @@ const AddBooking: React.FC<IAddBooking> = ({ id }) => {
   }, [dispatch]);
 
   React.useEffect(() => {
-    if (
-      currentStatus &&
-      currentStatus.type === "success" &&
-      currentStatus.message !== "Files uploaded successfully!"
-    ) {
+    if (currentStatus && currentStatus.type === "success") {
       reset();
     }
   }, [currentStatus]);
@@ -165,28 +170,100 @@ const AddBooking: React.FC<IAddBooking> = ({ id }) => {
     }
   }, [bookingId]);
 
-  // React.useEffect(() => {
-  //   if (currentBooking) {
-  //     setValue("shipper", currentBooking.shipper);
-  //     setValue("consignee", currentBooking.consignee);
-  //     setValue("bookingName", currentBooking.bookingName);
-  //     setValue("bookingBranch", currentBooking.bookingBranch);
-  //     setValue("ifscCode", currentBooking.ifscCode);
-  //     setValue("swiftCode", currentBooking.swiftCode);
-  //     setValue("branch", currentBooking.branch);
-  //   } else {
-  //     reset(DEFAULT_FORM_VALUES);
-  //   }
-  // }, [currentBooking]);
+  React.useEffect(() => {
+    if (currentBooking) {
+      console.log("currentBooking ===>", currentBooking);
+      setValue(
+        "shipper",
+        currentBooking.shipper //? currentBooking.shipper : { _id: "", name: "" }
+      );
+      // setValue(
+      //   "consignee",
+      //   currentBooking.consignee
+      //   // ? currentBooking.consignee
+      //   // : { _id: "", name: "" }
+      // );
+      // setValue(
+      //   "notifier",
+      //   currentBooking.notifier
+      //   // ? currentBooking.notifier
+      //   // : { _id: "", name: "" }
+      // );
+      // setValue(
+      //   "line",
+      //   currentBooking.line //? currentBooking.line : { _id: "", name: "" }
+      // );
+      // setValue(
+      //   "overseasAgent",
+      //   currentBooking.overseasAgent
+      //   // ? currentBooking.overseasAgent
+      //   // : { _id: "", name: "" }
+      // );
+      // setValue(
+      //   "deliveryAgent",
+      //   currentBooking.deliveryAgent
+      //   // ? currentBooking.deliveryAgent
+      //   // : { _id: "", name: "" }
+      // );
+      // setValue(
+      //   "transporter",
+      //   currentBooking.transporter
+      //   // ? currentBooking.transporter
+      //   // : { _id: "", name: "" }
+      // );
+      // setValue(
+      //   "CHA",
+      //   currentBooking.CHA //? currentBooking.CHA : { _id: "", name: "" }
+      // );
+      // setValue(
+      //   "commodity",
+      //   currentBooking.commodity
+      //   // ? currentBooking.commodity
+      //   // : { _id: "", commodityName: "" }
+      // );
+      // setValue(
+      //   "pol",
+      //   currentBooking.pol //? currentBooking.pol : { _id: "", portName: "" }
+      // );
+      // setValue(
+      //   "pod",
+      //   currentBooking.pod //? currentBooking.pod : { _id: "", portName: "" }
+      // );
+
+      setValue("finalDestination", currentBooking.finalDestination);
+    } else {
+      reset(DEFAULT_FORM_VALUES);
+    }
+  }, [currentBooking]);
 
   const submitHandler = (data: any, event: any) => {
     event.preventDefault();
+    console.log("data ===>", data);
     const booking = { ...data };
+    booking.blType = data.blType ? data.blType.type : null;
+    booking.mblTerms = data.mblTerms ? data.mblTerms.terms : null;
+    booking.hblTerms = data.hblTerms ? data.hblTerms.terms : null;
+
+    booking.shipper = data.shipper ? data.shipper._id : null;
+    booking.consignee = data.consignee ? data.consignee._id : null;
+    booking.notifier = data.notifier ? data.notifier._id : null;
+    booking.overseasAgent = data.overseasAgent ? data.overseasAgent._id : null;
+    booking.deliveryAgent = data.deliveryAgent ? data.deliveryAgent._id : null;
+    booking.transporter = data.transporter ? data.transporter._id : null;
+    booking.line = data.line ? data.line._id : null;
+    booking.CHA = data.CHA ? data.CHA._id : null;
+    booking.commodity = data.commodity ? data.commodity._id : null;
+    booking.pod = data.pod ? data.pod._id : null;
+    booking.pol = data.pol ? data.pol._id : null;
+
+    console.log("booking data ===>", booking);
+    booking.fyear = currentFyear?._id;
+    booking.pc_code = currentProfitCenter?._id;
 
     if (bookingId) {
       booking._id = bookingId;
       dispatch(updateBooking(booking));
-      navigate("/master/booking");
+      navigate("/booking");
     } else {
       dispatch(addNewBooking(booking));
     }
@@ -196,7 +273,7 @@ const AddBooking: React.FC<IAddBooking> = ({ id }) => {
     reset();
 
     if (bookingId) {
-      navigate("/master/booking");
+      navigate("/booking");
     }
   };
 
@@ -205,7 +282,7 @@ const AddBooking: React.FC<IAddBooking> = ({ id }) => {
       <CssBaseline />
       <form
         noValidate
-        onSubmit={handleSubmit(submitHandler)}
+        onSubmit={handleSubmit(submitHandler, onError)}
         style={{ marginTop: 3 }}
       >
         <Grid container spacing={2}>
@@ -217,21 +294,21 @@ const AddBooking: React.FC<IAddBooking> = ({ id }) => {
                   row
                   aria-label="AFD / SFD"
                   {...field}
-                  defaultValue="sfd"
+                  defaultValue="SFD"
                 >
                   <FormControlLabel
-                    value="sfd"
+                    value="SFD"
                     control={<Radio />}
                     label="SFD"
                   />
                   <FormControlLabel
-                    value="afd"
+                    value="AFD"
                     control={<Radio />}
                     label="AFD"
                   />
                 </RadioGroup>
               )}
-              name="freightType"
+              name="freight"
               control={control}
             />
           </Grid>
@@ -257,7 +334,7 @@ const AddBooking: React.FC<IAddBooking> = ({ id }) => {
                   />
                 </RadioGroup>
               )}
-              name="operationType"
+              name="operation"
               control={control}
             />
           </Grid>
@@ -321,10 +398,10 @@ const AddBooking: React.FC<IAddBooking> = ({ id }) => {
                   render={({ field: { onChange, value } }) => (
                     <Autocomplete
                       id="shipper"
-                      value={value}
                       onChange={(event, item) => {
                         onChange(item);
                       }}
+                      value={value}
                       options={shipperData}
                       getOptionLabel={(option) =>
                         option.name ? option.name : ""
@@ -385,7 +462,7 @@ const AddBooking: React.FC<IAddBooking> = ({ id }) => {
                 <Controller
                   control={control}
                   name="notifier"
-                  rules={{ required: true }}
+                  // rules={{ required: true }}
                   render={({ field: { onChange, value } }) => (
                     <Autocomplete
                       id="notifier"
@@ -418,7 +495,7 @@ const AddBooking: React.FC<IAddBooking> = ({ id }) => {
                 <Controller
                   control={control}
                   name="line"
-                  rules={{ required: true }}
+                  // rules={{ required: true }}
                   render={({ field: { onChange, value } }) => (
                     <Autocomplete
                       id="line"
@@ -451,7 +528,7 @@ const AddBooking: React.FC<IAddBooking> = ({ id }) => {
                 <Controller
                   control={control}
                   name="overseasAgent"
-                  rules={{ required: true }}
+                  // rules={{ required: true }}
                   render={({ field: { onChange, value } }) => (
                     <Autocomplete
                       id="overseasAgent"
@@ -484,7 +561,7 @@ const AddBooking: React.FC<IAddBooking> = ({ id }) => {
                 <Controller
                   control={control}
                   name="deliveryAgent"
-                  rules={{ required: true }}
+                  // rules={{ required: true }}
                   render={({ field: { onChange, value } }) => (
                     <Autocomplete
                       id="deliveryAgent"
@@ -517,7 +594,7 @@ const AddBooking: React.FC<IAddBooking> = ({ id }) => {
                 <Controller
                   control={control}
                   name="transporter"
-                  rules={{ required: true }}
+                  // rules={{ required: true }}
                   render={({ field: { onChange, value } }) => (
                     <Autocomplete
                       id="transporter"
@@ -550,7 +627,7 @@ const AddBooking: React.FC<IAddBooking> = ({ id }) => {
                 <Controller
                   control={control}
                   name="CHA"
-                  rules={{ required: true }}
+                  // rules={{ required: true }}
                   render={({ field: { onChange, value } }) => (
                     <Autocomplete
                       id="CHA"
@@ -653,7 +730,7 @@ const AddBooking: React.FC<IAddBooking> = ({ id }) => {
                   control={control}
                   name="finalDestination"
                   defaultValue=""
-                  rules={{ required: true }}
+                  // rules={{ required: true }}
                   render={({ field }) => (
                     <TextField
                       {...field}
@@ -674,7 +751,7 @@ const AddBooking: React.FC<IAddBooking> = ({ id }) => {
                   control={control}
                   name="blNo"
                   defaultValue=""
-                  rules={{ required: true }}
+                  // rules={{ required: true }}
                   render={({ field }) => (
                     <TextField
                       {...field}
@@ -694,7 +771,7 @@ const AddBooking: React.FC<IAddBooking> = ({ id }) => {
                 <Controller
                   control={control}
                   name="blType"
-                  rules={{ required: true }}
+                  // rules={{ required: true }}
                   render={({ field: { onChange, value } }) => (
                     <Autocomplete
                       id="blType"
@@ -713,8 +790,8 @@ const AddBooking: React.FC<IAddBooking> = ({ id }) => {
                         <TextField
                           {...params}
                           label="BL Type"
-                          error={!!errors.blType}
-                          helperText={errors.blType && "BL Type is required"}
+                          // error={!!errors.blType}
+                          // helperText={errors.blType && "BL Type is required"}
                           size="small"
                         />
                       )}
@@ -762,7 +839,7 @@ const AddBooking: React.FC<IAddBooking> = ({ id }) => {
                 <Controller
                   control={control}
                   name="hblTerms"
-                  rules={{ required: true }}
+                  // rules={{ required: true }}
                   render={({ field: { onChange, value } }) => (
                     <Autocomplete
                       id="hblTerms"
@@ -831,7 +908,7 @@ const AddBooking: React.FC<IAddBooking> = ({ id }) => {
                   control={control}
                   name="vessel"
                   defaultValue=""
-                  rules={{ required: true }}
+                  // rules={{ required: true }}
                   render={({ field }) => (
                     <TextField
                       {...field}
@@ -852,7 +929,7 @@ const AddBooking: React.FC<IAddBooking> = ({ id }) => {
                   control={control}
                   name="voyage"
                   defaultValue=""
-                  rules={{ required: true }}
+                  // rules={{ required: true }}
                   render={({ field }) => (
                     <TextField
                       {...field}
@@ -873,7 +950,7 @@ const AddBooking: React.FC<IAddBooking> = ({ id }) => {
                   control={control}
                   name="noOfPackages"
                   defaultValue=""
-                  rules={{ required: true }}
+                  // rules={{ required: true }}
                   render={({ field }) => (
                     <TextField
                       {...field}
@@ -881,10 +958,10 @@ const AddBooking: React.FC<IAddBooking> = ({ id }) => {
                       id="noOfPackages"
                       label="# of Packages"
                       required
-                      error={!!errors.noOfPackages}
-                      helperText={
-                        errors.noOfPackages && "Number of packages is required!"
-                      }
+                      // error={!!errors.noOfPackages}
+                      // helperText={
+                      //   errors.noOfPackages && "Number of packages is required!"
+                      // }
                       size="small"
                       type="number"
                     />
@@ -896,7 +973,7 @@ const AddBooking: React.FC<IAddBooking> = ({ id }) => {
                 <Controller
                   control={control}
                   name="grossWt"
-                  defaultValue=""
+                  // defaultValue=""
                   rules={{ required: true }}
                   render={({ field }) => (
                     <TextField
@@ -905,8 +982,8 @@ const AddBooking: React.FC<IAddBooking> = ({ id }) => {
                       id="grossWt"
                       label="Gross Wt"
                       required
-                      error={!!errors.grossWt}
-                      helperText={errors.grossWt && "Gross Wt is required!"}
+                      // error={!!errors.grossWt}
+                      // helperText={errors.grossWt && "Gross Wt is required!"}
                       size="small"
                       type="number"
                     />
@@ -919,7 +996,7 @@ const AddBooking: React.FC<IAddBooking> = ({ id }) => {
                   control={control}
                   name="netWt"
                   defaultValue=""
-                  rules={{ required: true }}
+                  // rules={{ required: true }}
                   render={({ field }) => (
                     <TextField
                       {...field}
@@ -965,7 +1042,7 @@ const AddBooking: React.FC<IAddBooking> = ({ id }) => {
               control={control}
               name="description"
               defaultValue=""
-              rules={{ required: true }}
+              // rules={{ required: true }}
               render={({ field }) => (
                 <TextField
                   {...field}
@@ -985,7 +1062,7 @@ const AddBooking: React.FC<IAddBooking> = ({ id }) => {
               control={control}
               name="remarks"
               defaultValue=""
-              rules={{ required: true }}
+              // rules={{ required: true }}
               render={({ field }) => (
                 <TextField
                   {...field}

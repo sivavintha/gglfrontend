@@ -147,19 +147,19 @@ export type TEvent = {
 export type TBooking = {
   _id?: string;
   bookingNo: string;
-  fyear: string;
-  pc_code: string;
+  fyear: any;
+  pc_code: any;
   freight: string;
   operation: string;
   shipmentType: string;
-  pol: string;
-  pod: string;
+  pol: any;
+  pod: any;
   finalDestination: string;
   blNo: string;
   blType: string;
   mblTerms: string;
   hblTerms: string;
-  commodity: string;
+  commodity: any;
   vessel: string;
   voyage: string;
   noOfPackages: string;
@@ -240,14 +240,14 @@ export type TBooking = {
     | null
     | undefined;
 
-  shipper: string;
-  consignee: string;
-  notifier: string;
-  overseasAgent: string;
-  line: string;
-  deliveryAgent: string;
-  transporter: string;
-  cha: string;
+  shipper: any;
+  consignee: any;
+  notifier: any;
+  overseasAgent: any;
+  line: any;
+  deliveryAgent: any;
+  transporter: any;
+  CHA: any;
 };
 
 export type TContract = {

@@ -111,7 +111,7 @@ const AddContainer: React.FC<IAddContainer> = ({ id }) => {
     if (bookingId) {
       booking._id = bookingId;
       dispatch(updateBooking(booking));
-      navigate("/master/booking");
+      navigate("/booking");
     } else {
       dispatch(addNewBooking(booking));
     }
@@ -121,7 +121,7 @@ const AddContainer: React.FC<IAddContainer> = ({ id }) => {
     reset();
 
     if (bookingId) {
-      navigate("/master/booking");
+      navigate("/booking");
     }
   };
 

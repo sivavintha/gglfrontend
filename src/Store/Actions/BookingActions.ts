@@ -6,7 +6,7 @@ import { bookingActions } from "../Reducers/BookingReducer";
 export const getBookings = (hideMessage?: boolean) => {
   return async (dispatch: any) => {
     dispatch(spinnerActions.setLoading(true));
-    Api("bookings/all", "GET", {}, "", true)
+    Api("booking/all", "GET", {}, "", true)
       .then(async (result: any) => {
         if (result) {
           await dispatch(
@@ -48,7 +48,7 @@ export const getBookingById = (bookingId: string) => {
   return async (dispatch: any) => {
     dispatch(spinnerActions.setLoading(true));
 
-    Api("bookings/" + bookingId, "GET", {}, "", true)
+    Api("booking/" + bookingId, "GET", {}, "", true)
       .then(async (result: any) => {
         if (result) {
           await dispatch(
@@ -83,7 +83,7 @@ export const addNewBooking = (booking: TBooking) => {
   return async (dispatch: any) => {
     dispatch(spinnerActions.setLoading(true));
 
-    Api("bookings/create", "POST", booking, "", true)
+    Api("booking/create", "POST", booking, "", true)
       .then(async (result: any) => {
         if (result.status) {
           await dispatch(getBookings(true));
@@ -120,7 +120,7 @@ export const updateBooking = (booking: TBooking) => {
   return async (dispatch: any) => {
     dispatch(spinnerActions.setLoading(true));
 
-    Api("bookings/update", "PUT", booking, "", true)
+    Api("booking/update", "PUT", booking, "", true)
       .then(async (result: any) => {
         if (result) {
           await dispatch(getBookings(true));
@@ -157,7 +157,7 @@ export const deleteBookingById = (bookingId: string) => {
   return async (dispatch: any) => {
     dispatch(spinnerActions.setLoading(true));
 
-    Api("bookings/" + bookingId, "DELETE", {}, "", true)
+    Api("booking/" + bookingId, "DELETE", {}, "", true)
       .then(async (result: any) => {
         if (result) {
           await dispatch(getBookings(true));

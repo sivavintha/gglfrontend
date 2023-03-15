@@ -1,40 +1,40 @@
 import { spinnerActions } from "../Reducers/SpinnerReducer";
 import Api from "../../Services";
-import { TBooking } from "../../Types";
-import { bookingActions } from "../Reducers/BookingReducer";
+import { TBasisType } from "../../Types";
+import { basisTypeActions } from "../Reducers/BasisTypeReducer";
 
-export const getBookings = (hideMessage?: boolean) => {
+export const getBasisType = (hideMessage?: boolean) => {
   return async (dispatch: any) => {
     dispatch(spinnerActions.setLoading(true));
-    Api("booking/all", "GET", {}, "", true)
+    Api("basistype/all", "GET", {}, "", true)
       .then(async (result: any) => {
         if (result) {
           await dispatch(
-            bookingActions.fetchBookings({
-              bookings: result.data,
+            basisTypeActions.fetchBasisType({
+              basisType: result.data,
             })
           );
           !hideMessage &&
             (await dispatch(
-              bookingActions.setStatus({
+              basisTypeActions.setStatus({
                 statusType: "success",
-                message: "Booking fetched successfully!",
+                message: "BasisType fetched successfully!",
               })
             ));
         } else {
           await dispatch(
-            bookingActions.setStatus({
+            basisTypeActions.setStatus({
               statusType: "error",
-              message: "Booking fetching failed!",
+              message: "BasisType fetching failed!",
             })
           );
         }
       })
       .catch(async (error) => {
         await dispatch(
-          bookingActions.setStatus({
+          basisTypeActions.setStatus({
             statusType: "error",
-            message: "Booking fetching failed: " + error,
+            message: "BasisType fetching failed: " + error,
           })
         );
       })
@@ -44,32 +44,32 @@ export const getBookings = (hideMessage?: boolean) => {
   };
 };
 
-export const getBookingById = (bookingId: string) => {
+export const getBasisTypeById = (basisTypeId: string) => {
   return async (dispatch: any) => {
     dispatch(spinnerActions.setLoading(true));
 
-    Api("booking/" + bookingId, "GET", {}, "", true)
+    Api("basistype/" + basisTypeId, "GET", {}, "", true)
       .then(async (result: any) => {
         if (result) {
           await dispatch(
-            bookingActions.fetchBookingById({
-              booking: result.data,
+            basisTypeActions.fetchBasisTypeById({
+              basisType: result.data,
             })
           );
         } else {
           await dispatch(
-            bookingActions.setStatus({
+            basisTypeActions.setStatus({
               statusType: "error",
-              message: "Booking fetching failed!",
+              message: "BasisType fetching failed!",
             })
           );
         }
       })
       .catch(async (error) => {
         await dispatch(
-          bookingActions.setStatus({
+          basisTypeActions.setStatus({
             statusType: "error",
-            message: "Booking fetching failed: " + error,
+            message: "BasisType fetching failed: " + error,
           })
         );
       })
@@ -79,24 +79,23 @@ export const getBookingById = (bookingId: string) => {
   };
 };
 
-export const addNewBooking = (booking: TBooking) => {
+export const addNewBasisType = (basisType: TBasisType) => {
   return async (dispatch: any) => {
     dispatch(spinnerActions.setLoading(true));
 
-    Api("booking/create", "POST", booking, "", true)
+    Api("basistype/create", "POST", basisType, "", true)
       .then(async (result: any) => {
         if (result.status) {
-          const bookingNo = result.data.bookingNo || "";
-          await dispatch(getBookings(true));
+          await dispatch(getBasisType(true));
           await dispatch(
-            bookingActions.setStatus({
+            basisTypeActions.setStatus({
               statusType: "success",
-              message: `Booking ${bookingNo} Added successfully!`,
+              message: "Added successfully!",
             })
           );
         } else {
           await dispatch(
-            bookingActions.setStatus({
+            basisTypeActions.setStatus({
               statusType: "error",
               message: "Failed! " + result.message,
             })
@@ -105,9 +104,9 @@ export const addNewBooking = (booking: TBooking) => {
       })
       .catch(async (error) => {
         await dispatch(
-          bookingActions.setStatus({
+          basisTypeActions.setStatus({
             statusType: "error",
-            message: "Booking adding failed! error = " + error,
+            message: "BasisType adding failed! error = " + error,
           })
         );
       })
@@ -117,46 +116,34 @@ export const addNewBooking = (booking: TBooking) => {
   };
 };
 
-export const updateBooking = (booking: any, type: string) => {
+export const updateBasisType = (basisType: TBasisType) => {
   return async (dispatch: any) => {
     dispatch(spinnerActions.setLoading(true));
-    let url = "booking/update";
-    if (type === "GENERAL") {
-      url += "/general";
-    } else if (type === "SCHEDULE") {
-      url += "/schedule";
-    } else if (type === "RATES") {
-      url += "/rates";
-    } else if (type === "CONTAINER") {
-      url += "/container";
-    } else if (type === "EVENTS") {
-      url += "/events";
-    }
 
-    Api(url, "PUT", booking, "", true)
+    Api("basistype/update", "PUT", basisType, "", true)
       .then(async (result: any) => {
         if (result) {
-          await dispatch(getBookings(true));
+          await dispatch(getBasisType(true));
           await dispatch(
-            bookingActions.setStatus({
+            basisTypeActions.setStatus({
               statusType: "success",
-              message: "Booking updated successfully!",
+              message: "BasisType updated successfully!",
             })
           );
         } else {
           await dispatch(
-            bookingActions.setStatus({
+            basisTypeActions.setStatus({
               statusType: "error",
-              message: "Booking updation failed!",
+              message: "BasisType updation failed!",
             })
           );
         }
       })
       .catch(async (error) => {
         await dispatch(
-          bookingActions.setStatus({
+          basisTypeActions.setStatus({
             statusType: "error",
-            message: "Booking updation failed! error = " + error,
+            message: "BasisType updation failed! error = " + error,
           })
         );
       })
@@ -166,34 +153,34 @@ export const updateBooking = (booking: any, type: string) => {
   };
 };
 
-export const deleteBookingById = (bookingId: string) => {
+export const deleteBasisTypeById = (basisTypeId: string) => {
   return async (dispatch: any) => {
     dispatch(spinnerActions.setLoading(true));
 
-    Api("booking/" + bookingId, "DELETE", {}, "", true)
+    Api("basistype/" + basisTypeId, "DELETE", {}, "", true)
       .then(async (result: any) => {
         if (result) {
-          await dispatch(getBookings(true));
+          await dispatch(getBasisType(true));
           await dispatch(
-            bookingActions.setStatus({
+            basisTypeActions.setStatus({
               statusType: "success",
-              message: "Booking deleted successfully!",
+              message: "BasisType deleted successfully!",
             })
           );
         } else {
           await dispatch(
-            bookingActions.setStatus({
+            basisTypeActions.setStatus({
               statusType: "error",
-              message: "Booking deletion failed!",
+              message: "BasisType deletion failed!",
             })
           );
         }
       })
       .catch(async (error) => {
         await dispatch(
-          bookingActions.setStatus({
+          basisTypeActions.setStatus({
             statusType: "error",
-            message: "Booking deletion failed! error = " + error,
+            message: "BasisType deletion failed! error = " + error,
           })
         );
       })

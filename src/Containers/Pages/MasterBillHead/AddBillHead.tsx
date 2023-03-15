@@ -189,7 +189,7 @@ const AddBillHead: React.FC<IAddBillHead> = () => {
                           onChange(val);
                           setDisableGSTSlab(false);
                           if (!val.target.checked) {
-                            setValue("gstSlab", "");
+                            setValue("gstSlab", null);
                             setDisableGSTSlab(true);
                           }
                         }}

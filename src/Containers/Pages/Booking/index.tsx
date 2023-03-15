@@ -27,16 +27,15 @@ import CustomDialog from "../../../Components/CustomDialog";
 import ViewBooking from "./ViewBooking";
 import { Navigate, useNavigate } from "react-router";
 import AddContainer from "./AddContainer";
+import AddSellRate from "./AddSellRate";
+import AddBuyRate from "./AddBuyRate";
 
 const BookingList: React.FC = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const [openDialog, setOpenDialog] = React.useState(false);
 
-  const [editBookingId, setEditBookingId] = React.useState<any>(null);
   const [viewBookingId, setViewBookingId] = React.useState<any>(null);
-
-  const [category, setCategory] = React.useState<any>("booking");
 
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const dispatch = useAppDispatch();
@@ -69,16 +68,27 @@ const BookingList: React.FC = () => {
   }, [BookingStatus]);
 
   React.useEffect(() => {
-    dispatch(getBookings(category));
-  }, [dispatch, category]);
+    dispatch(getBookings(false));
+  }, [dispatch]);
 
   const deleteBooking = (id: string) => {
     dispatch(deleteBookingById(id));
   };
 
   const editBooking = (id: string) => {
-    setEditBookingId(id);
     navigate("/addbooking", { state: { id: id } });
+  };
+
+  const editContainer = (id: string) => {
+    navigate("/addcontainer", { state: { id: id } });
+  };
+
+  const editSellRate = (id: string) => {
+    navigate("/addsellrate", { state: { id: id } });
+  };
+
+  const editBuyrate = (id: string) => {
+    navigate("/addbuyrate", { state: { id: id } });
   };
 
   const viewBooking = (id: string) => {
@@ -185,6 +195,24 @@ const BookingList: React.FC = () => {
           label="Delete"
           onClick={() => deleteBooking(params.id)}
         />,
+        <GridActionsCellItem
+          icon={<Edit />}
+          label="Edit Container"
+          onClick={() => editContainer(params.id)}
+          showInMenu
+        />,
+        <GridActionsCellItem
+          icon={<Edit />}
+          label="Edit SellRate"
+          onClick={() => editSellRate(params.id)}
+          showInMenu
+        />,
+        <GridActionsCellItem
+          icon={<Edit />}
+          label="Edit BuyRate"
+          onClick={() => editBuyrate(params.id)}
+          showInMenu
+        />,
       ],
     },
   ];
@@ -209,6 +237,8 @@ const BookingList: React.FC = () => {
             <Tab label="Current List" />
             <Tab label=" Create Booking" />
             <Tab label=" Container Details" />
+            <Tab label=" Sell Rate" />
+            <Tab label=" Buy Rate" />
           </Tabs>
         </Box>
         <SwipeableViews
@@ -225,8 +255,14 @@ const BookingList: React.FC = () => {
           <TabPanel value={value} index={1}>
             <AddBooking />
           </TabPanel>
-          <TabPanel value={value} index={1}>
+          <TabPanel value={value} index={2}>
             <AddContainer />
+          </TabPanel>
+          <TabPanel value={value} index={3}>
+            <AddSellRate />
+          </TabPanel>
+          <TabPanel value={value} index={4}>
+            <AddBuyRate />
           </TabPanel>
         </SwipeableViews>
       </Box>

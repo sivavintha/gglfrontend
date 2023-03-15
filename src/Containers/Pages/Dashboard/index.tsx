@@ -115,7 +115,7 @@ const DashboardPage: React.FC = () => {
               # of Bookings
             </Typography>
             <Typography variant="h3" component="div">
-              {dashboardDetails.bookingCount}
+              {dashboardDetails.bookingsCount}
             </Typography>
           </Box>
           <img src={openBox} alt="" style={{ width: "100px" }} />
@@ -136,7 +136,7 @@ const DashboardPage: React.FC = () => {
               # of Invoices
             </Typography>
             <Typography variant="h3" component="div">
-              {dashboardDetails.invoicesCount}
+              {dashboardDetails.invoiceCount}
             </Typography>
           </Box>
           <img src={document} alt="" style={{ width: "100px" }} />

@@ -63,6 +63,25 @@ export type TProfitCenter = {
   profitCenterShortName: string;
 };
 
+export type TContainerType = {
+  _id?: string;
+  type: string;
+  abbr: string;
+};
+
+export type TBasisType = {
+  _id?: string;
+  name: string;
+  abbr: string;
+};
+
+export type TCurrency = {
+  _id?: string;
+  name: string;
+  abbr: string;
+};
+
+
 export type TFyear = {
   _id?: string;
   prefix: string;
@@ -168,77 +187,60 @@ export type TBooking = {
   cbm: string;
   description: string;
   remarks: string;
+  ourRefNo: string;
+  exrate: string;
 
-  containers:
-    | [
-        {
-          number: string;
-          type: string;
-          sealNo: string;
-          grossWt: number;
-          netWt: number;
-          cbm: number;
-        }
-      ]
-    | null
-    | undefined;
+  containers: {
+    containerNo: string;
+    containerType: string;
+    sealNo: string;
+    noOfPackages: number;
+    grossWt: number;
+    netWt: number;
+    cbm: number;
+  }[];
 
-  vesselSchedule:
-    | [
-        {
-          legNo: string;
-          vesselType: string;
-          vesselName: string;
-          voyage: string;
-          portFrom: string;
-          portTo: string;
+  vesselSchedule: {
+    legNo: string;
+    vesselType: string;
+    vesselName: string;
+    voyage: string;
+    portFrom: string;
+    portTo: string;
 
-          ETD: Date;
-          ETA: Date;
-          sailedDt: Date;
-          arrivedDt: Date;
-        }
-      ]
-    | null
-    | undefined;
+    ETD: Date;
+    ETA: Date;
+    sailedDt: Date;
+    arrivedDt: Date;
+  }[];
 
-  buyRate:
-    | [
-        {
-          narration: string;
-          description: string;
-          billingTo: string;
-          isSupplementary: string;
-          basis: string;
-          qty: number;
-          currency: string;
-          unitRate: number;
-          exrate: number;
-          amount: number;
-          isFinalled: boolean;
-        }
-      ]
-    | null
-    | undefined;
+  buyRate: {
+    narration: string;
+    description: string;
+    billingTo: any;
+    isSupplementary?: boolean;
+    basis: any;
+    qty: any;
+    currency: any;
+    unitRate: any;
+    exrate: any;
+    amount: any;
+    isFinalled?: boolean;
+  }[];
 
-  sellRate:
-    | [
-        {
-          narration: string;
-          description: string;
-          billingTo: string;
-          isSupplementary: string;
-          basis: string;
-          qty: number;
-          currency: string;
-          unitRate: number;
-          exrate: number;
-          amount: number;
-          isFinalled: boolean;
-        }
-      ]
-    | null
-    | undefined;
+  sellRate: {
+    narration: string;
+    description: string;
+    billingTo: any;
+    isSupplementary?: boolean;
+    basis: any;
+    qty: any;
+    currency: any;
+    unitRate: any;
+    exrate: any;
+    amount: any;
+    isFinalled?: boolean;
+  }[];
 
   shipper: any;
   consignee: any;
@@ -248,6 +250,22 @@ export type TBooking = {
   deliveryAgent: any;
   transporter: any;
   CHA: any;
+};
+
+export type TInvoice = {
+  _id?: string;
+  invoiceNo?: string;
+  fyear: any;
+  pc_code: any;
+  invoiceCategory: string;
+  billingTo: string;
+  bookingNo: any;
+  billingParty: any;
+  invoiceDate: Date;
+  isFinalled: boolean;
+  cancelledBy: any;
+  isCancelled: boolean;
+  cancelledAt: Date;
 };
 
 export type TContract = {
@@ -274,9 +292,9 @@ export type TContract = {
 export type TDashboard = {
   customerCount: number;
   vendorCount: number;
-  bookingCount: number;
+  bookingsCount: number;
   commodityCount: number;
-  invoicesCount: number;
+  invoiceCount: number;
 };
 
 export type TOrigin = {

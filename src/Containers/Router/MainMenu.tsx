@@ -12,6 +12,8 @@ import {
   Star,
   WebAsset,
   Handshake,
+  Inventory,
+  Note,
 } from "@mui/icons-material";
 import CustomIcon from "../../Components/CustomIcon";
 import cashew from "../../Assets/icons/cashew.png";
@@ -59,10 +61,15 @@ export const MAINMENU = [
     title: "Booking",
     to: "/booking",
   },
+  // {
+  //   icon: <EventAvailable />,
+  //   title: "Events",
+  //   to: "/events",
+  // },
   {
-    icon: <EventAvailable />,
-    title: "Events",
-    to: "/events",
+    icon: <Note />,
+    title: "Invoice",
+    to: "/invoice",
   },
   // {
   //   icon: <Gavel />,

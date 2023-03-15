@@ -6,9 +6,9 @@ const initialState: IDashboardState = {
   dashboard: {
     customerCount: 0,
     vendorCount: 0,
-    bookingCount: 0,
+    bookingsCount: 0,
     commodityCount: 0,
-    invoicesCount: 0,
+    invoiceCount: 0,
   },
   status: null,
 };

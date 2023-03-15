@@ -1,40 +1,40 @@
 import { spinnerActions } from "../Reducers/SpinnerReducer";
 import Api from "../../Services";
-import { TBooking } from "../../Types";
-import { bookingActions } from "../Reducers/BookingReducer";
+import { TInvoice } from "../../Types";
+import { invoiceActions } from "../Reducers/InvoiceReducer";
 
-export const getBookings = (hideMessage?: boolean) => {
+export const getInvoices = (hideMessage?: boolean) => {
   return async (dispatch: any) => {
     dispatch(spinnerActions.setLoading(true));
-    Api("booking/all", "GET", {}, "", true)
+    Api("invoice/all", "GET", {}, "", true)
       .then(async (result: any) => {
         if (result) {
           await dispatch(
-            bookingActions.fetchBookings({
-              bookings: result.data,
+            invoiceActions.fetchInvoices({
+              invoices: result.data,
             })
           );
           !hideMessage &&
             (await dispatch(
-              bookingActions.setStatus({
+              invoiceActions.setStatus({
                 statusType: "success",
-                message: "Booking fetched successfully!",
+                message: "Invoice fetched successfully!",
               })
             ));
         } else {
           await dispatch(
-            bookingActions.setStatus({
+            invoiceActions.setStatus({
               statusType: "error",
-              message: "Booking fetching failed!",
+              message: "Invoice fetching failed!",
             })
           );
         }
       })
       .catch(async (error) => {
         await dispatch(
-          bookingActions.setStatus({
+          invoiceActions.setStatus({
             statusType: "error",
-            message: "Booking fetching failed: " + error,
+            message: "Invoice fetching failed: " + error,
           })
         );
       })
@@ -44,32 +44,32 @@ export const getBookings = (hideMessage?: boolean) => {
   };
 };
 
-export const getBookingById = (bookingId: string) => {
+export const getInvoiceById = (invoiceId: string) => {
   return async (dispatch: any) => {
     dispatch(spinnerActions.setLoading(true));
 
-    Api("booking/" + bookingId, "GET", {}, "", true)
+    Api("invoice/" + invoiceId, "GET", {}, "", true)
       .then(async (result: any) => {
         if (result) {
           await dispatch(
-            bookingActions.fetchBookingById({
-              booking: result.data,
+            invoiceActions.fetchInvoiceById({
+              invoice: result.data,
             })
           );
         } else {
           await dispatch(
-            bookingActions.setStatus({
+            invoiceActions.setStatus({
               statusType: "error",
-              message: "Booking fetching failed!",
+              message: "Invoice fetching failed!",
             })
           );
         }
       })
       .catch(async (error) => {
         await dispatch(
-          bookingActions.setStatus({
+          invoiceActions.setStatus({
             statusType: "error",
-            message: "Booking fetching failed: " + error,
+            message: "Invoice fetching failed: " + error,
           })
         );
       })
@@ -79,24 +79,24 @@ export const getBookingById = (bookingId: string) => {
   };
 };
 
-export const addNewBooking = (booking: TBooking) => {
+export const addNewInvoice = (invoice: TInvoice) => {
   return async (dispatch: any) => {
     dispatch(spinnerActions.setLoading(true));
 
-    Api("booking/create", "POST", booking, "", true)
+    Api("invoice/create", "POST", invoice, "", true)
       .then(async (result: any) => {
         if (result.status) {
-          const bookingNo = result.data.bookingNo || "";
-          await dispatch(getBookings(true));
+          const invoiceNo = result.data.invoiceNo || "";
+          await dispatch(getInvoices(true));
           await dispatch(
-            bookingActions.setStatus({
+            invoiceActions.setStatus({
               statusType: "success",
-              message: `Booking ${bookingNo} Added successfully!`,
+              message: `Invoice ${invoiceNo} Added successfully!`,
             })
           );
         } else {
           await dispatch(
-            bookingActions.setStatus({
+            invoiceActions.setStatus({
               statusType: "error",
               message: "Failed! " + result.message,
             })
@@ -105,9 +105,9 @@ export const addNewBooking = (booking: TBooking) => {
       })
       .catch(async (error) => {
         await dispatch(
-          bookingActions.setStatus({
+          invoiceActions.setStatus({
             statusType: "error",
-            message: "Booking adding failed! error = " + error,
+            message: "Invoice adding failed! error = " + error,
           })
         );
       })
@@ -117,10 +117,10 @@ export const addNewBooking = (booking: TBooking) => {
   };
 };
 
-export const updateBooking = (booking: any, type: string) => {
+export const updateInvoice = (invoice: any, type: string) => {
   return async (dispatch: any) => {
     dispatch(spinnerActions.setLoading(true));
-    let url = "booking/update";
+    let url = "invoice/update";
     if (type === "GENERAL") {
       url += "/general";
     } else if (type === "SCHEDULE") {
@@ -133,30 +133,30 @@ export const updateBooking = (booking: any, type: string) => {
       url += "/events";
     }
 
-    Api(url, "PUT", booking, "", true)
+    Api(url, "PUT", invoice, "", true)
       .then(async (result: any) => {
         if (result) {
-          await dispatch(getBookings(true));
+          await dispatch(getInvoices(true));
           await dispatch(
-            bookingActions.setStatus({
+            invoiceActions.setStatus({
               statusType: "success",
-              message: "Booking updated successfully!",
+              message: "Invoice updated successfully!",
             })
           );
         } else {
           await dispatch(
-            bookingActions.setStatus({
+            invoiceActions.setStatus({
               statusType: "error",
-              message: "Booking updation failed!",
+              message: "Invoice updation failed!",
             })
           );
         }
       })
       .catch(async (error) => {
         await dispatch(
-          bookingActions.setStatus({
+          invoiceActions.setStatus({
             statusType: "error",
-            message: "Booking updation failed! error = " + error,
+            message: "Invoice updation failed! error = " + error,
           })
         );
       })
@@ -166,34 +166,34 @@ export const updateBooking = (booking: any, type: string) => {
   };
 };
 
-export const deleteBookingById = (bookingId: string) => {
+export const deleteInvoiceById = (invoiceId: string) => {
   return async (dispatch: any) => {
     dispatch(spinnerActions.setLoading(true));
 
-    Api("booking/" + bookingId, "DELETE", {}, "", true)
+    Api("invoice/" + invoiceId, "DELETE", {}, "", true)
       .then(async (result: any) => {
         if (result) {
-          await dispatch(getBookings(true));
+          await dispatch(getInvoices(true));
           await dispatch(
-            bookingActions.setStatus({
+            invoiceActions.setStatus({
               statusType: "success",
-              message: "Booking deleted successfully!",
+              message: "Invoice deleted successfully!",
             })
           );
         } else {
           await dispatch(
-            bookingActions.setStatus({
+            invoiceActions.setStatus({
               statusType: "error",
-              message: "Booking deletion failed!",
+              message: "Invoice deletion failed!",
             })
           );
         }
       })
       .catch(async (error) => {
         await dispatch(
-          bookingActions.setStatus({
+          invoiceActions.setStatus({
             statusType: "error",
-            message: "Booking deletion failed! error = " + error,
+            message: "Invoice deletion failed! error = " + error,
           })
         );
       })
@@ -202,3 +202,38 @@ export const deleteBookingById = (bookingId: string) => {
       });
   };
 };
+
+export const printInvoiceById = (invoiceId: string) => {
+    return async (dispatch: any) => {
+      dispatch(spinnerActions.setLoading(true));
+  
+      Api("invoice/" + invoiceId, "GET", {}, "", true)
+        .then(async (result: any) => {
+          if (result) {
+            await dispatch(
+              invoiceActions.setPrintInvoice({
+                contract: result.data,
+              })
+            );
+          } else {
+            await dispatch(
+                invoiceActions.setStatus({
+                statusType: "error",
+                message: "Contract fetching failed!",
+              })
+            );
+          }
+        })
+        .catch(async (error) => {
+          await dispatch(
+            invoiceActions.setStatus({
+              statusType: "error",
+              message: "Contract fetching failed: " + error,
+            })
+          );
+        })
+        .finally(() => {
+          dispatch(spinnerActions.setLoading(false));
+        });
+    };
+  };

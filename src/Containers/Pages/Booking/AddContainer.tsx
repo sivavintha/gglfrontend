@@ -1,86 +1,183 @@
-import React from "react";
+import * as React from "react";
 import {
-  Button,
-  CssBaseline,
+  useForm,
+  useFieldArray,
+  useFormContext,
+  Controller,
+} from "react-hook-form";
+import {
   TextField,
+  Button,
+  Autocomplete,
   Grid,
   Container,
+  CssBaseline,
+  Tooltip,
   Fab,
-  FormControlLabel,
-  Radio,
-  RadioGroup,
-  Autocomplete,
+  Box,
 } from "@mui/material";
-import { useForm, Controller, FormProvider } from "react-hook-form";
 import { useAppDispatch, useAppSelector } from "../../../Hooks";
 import {
-  addNewBooking,
-  getBookingById,
+  getBookings,
   updateBooking,
+  getBookingById,
 } from "../../../Store/Actions/BookingActions";
 import { bookingActions } from "../../../Store/Reducers/BookingReducer";
 
-import { Add, Cancel, Remove, Save } from "@mui/icons-material";
+import { Cancel, Save, Add, Remove } from "@mui/icons-material";
 import { useLocation, useNavigate } from "react-router";
+import { useSnackbar } from "notistack";
+import { getContainerType } from "../../../Store/Actions/ContainerTypeActions";
+
+type FormValues = {
+  bookingNo: any;
+
+  containers: {
+    containerNo: string;
+    containerType: any;
+    sealNo: string;
+    noOfPackages: number;
+    grossWt: number;
+    netWt: number;
+    cbm: number;
+  }[];
+};
 
 interface IAddContainer {
   id?: string;
 }
 
-const AddContainer: React.FC<IAddContainer> = ({ id }) => {
-  const DEFAULT_FORM_VALUES = {
-    bookingNo: "",
-  };
-
-  const {
-    register,
-    handleSubmit,
-    control,
-    formState: { errors },
-    setValue,
-    reset,
-  } = useForm<any>({
-    defaultValues: DEFAULT_FORM_VALUES,
-  });
-
+const AddContainer = () => {
   const dispatch = useAppDispatch();
   const location = useLocation();
   const newState = location.state as IAddContainer;
   const bookingId: any = newState?.id;
   const navigate = useNavigate();
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+
+  const bookingData = useAppSelector((state) => state.booking.bookings);
   const currentBooking = useAppSelector(
     (state) => state.booking.currentBooking
   );
-  const shipperData = useAppSelector((state) => state.event.event);
-  const consigneeData = useAppSelector((state) => state.event.event);
-  const notifierData = useAppSelector((state) => state.event.event);
-  const lineData = useAppSelector((state) => state.event.event);
-  const transporterData = useAppSelector((state) => state.event.event);
-  const CHAData = useAppSelector((state) => state.event.event);
-  const oAgentData = useAppSelector((state) => state.event.event);
-  const polData = useAppSelector((state) => state.event.event);
-  const podData = useAppSelector((state) => state.event.event);
-  const deliveryAgentData = useAppSelector((state) => state.event.event);
-  const containerTypeData = useAppSelector((state) => state.event.event);
-  const commodityData = useAppSelector((state) => state.event.event);
-
-  const blTermsData = [
-    { terms: "Prepaid", abbr: "P" },
-    { terms: "Collect", abbr: "C" },
-  ];
-  const blTypeData = [{ type: "Direct" }, { type: "House" }];
-
   const currentStatus = useAppSelector((state) => state.booking.status);
 
+  const containerDataType = useAppSelector(
+    (state) => state.containerType.containerTypes
+  );
+
+  // const containerDataType = [
+  //   {
+  //     type: "20 GP",
+  //     abbr: "20",
+  //   },
+  //   {
+  //     type: "20 HC",
+  //     abbr: "2H",
+  //   },
+  //   {
+  //     type: "20 LCL",
+  //     abbr: "2L",
+  //   },
+  //   {
+  //     type: "20 FCL",
+  //     abbr: "2F",
+  //   },
+  //   {
+  //     type: "20 PART",
+  //     abbr: "2P",
+  //   },
+  //   {
+  //     type: "40 GP",
+  //     abbr: "40",
+  //   },
+  //   {
+  //     type: "40 HC",
+  //     abbr: "4H",
+  //   },
+  //   {
+  //     type: "40 FCL",
+  //     abbr: "4F",
+  //   },
+  //   {
+  //     type: "40 PART",
+  //     abbr: "4P",
+  //   },
+  //   {
+  //     type: "20 OT",
+  //     abbr: "2T",
+  //   },
+  //   {
+  //     type: "40 OT",
+  //     abbr: "4T",
+  //   },
+  //   {
+  //     type: "20 REEFER",
+  //     abbr: "2R",
+  //   },
+  //   {
+  //     type: "40 REEFER",
+  //     abbr: "4R",
+  //   },
+  //   {
+  //     type: "20 ISO TANKER",
+  //     abbr: "2I",
+  //   },
+  //   {
+  //     type: "40 ISO TANKER",
+  //     abbr: "4I",
+  //   },
+  //   {
+  //     type: "45 HC",
+  //     abbr: "45",
+  //   },
+  // ];
+
+  const DEFAULT_FORM_VALUES = {
+    bookingNo: null,
+    containers: [
+      {
+        containerNo: "",
+        containerType: {
+          type: "20 GP",
+          abbr: "20",
+        },
+        sealNo: "",
+        noOfPackages: 0,
+        grossWt: 0,
+        netWt: 0,
+        cbm: 0,
+      },
+    ],
+  };
+
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    reset,
+  } = useForm<FormValues>({
+    defaultValues: DEFAULT_FORM_VALUES,
+  });
+
+  const onError = (errors: any, e: any) => console.log(errors, e);
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "containers",
+  });
+
   React.useEffect(() => {
-    if (
-      currentStatus &&
-      currentStatus.type === "success" &&
-      currentStatus.message !== "Files uploaded successfully!"
-    ) {
+    dispatch(getBookings(true));
+    dispatch(getContainerType(true));
+  }, [dispatch]);
+
+  React.useEffect(() => {
+    if (currentStatus && currentStatus.type === "success") {
       reset();
     }
-  }, [currentStatus]);
+  }, [currentStatus, reset]);
 
   React.useEffect(() => {
     if (bookingId) {
@@ -88,32 +185,36 @@ const AddContainer: React.FC<IAddContainer> = ({ id }) => {
     } else {
       dispatch(bookingActions.fetchBookingById({ booking: null }));
     }
-  }, [bookingId]);
+  }, [bookingId, dispatch]);
 
-  // React.useEffect(() => {
-  //   if (currentBooking) {
-  //     setValue("shipper", currentBooking.shipper);
-  //     setValue("consignee", currentBooking.consignee);
-  //     setValue("bookingName", currentBooking.bookingName);
-  //     setValue("bookingBranch", currentBooking.bookingBranch);
-  //     setValue("ifscCode", currentBooking.ifscCode);
-  //     setValue("swiftCode", currentBooking.swiftCode);
-  //     setValue("branch", currentBooking.branch);
-  //   } else {
-  //     reset(DEFAULT_FORM_VALUES);
-  //   }
-  // }, [currentBooking]);
+  React.useEffect(() => {
+    if (currentBooking) {
+      console.log("currentBooking ===>", currentBooking);
+      setValue("bookingNo", currentBooking);
+      setValue("containers", currentBooking.containers);
+    }
+  }, [currentBooking]);
 
-  const submitHandler = (data: any, event: any) => {
+  const onSubmit = (data: FormValues, event: any) => {
     event.preventDefault();
-    const booking = { ...data };
 
+    if (!data.containers || data.containers.length === 0) {
+      enqueueSnackbar("Please  add atleast one container details to save", {
+        variant: "error",
+      });
+      return;
+    }
+    console.log("data ===>", data);
+    const booking: any = {
+      _id: data.bookingNo._id,
+      containers: data.containers,
+    };
     if (bookingId) {
       booking._id = bookingId;
-      dispatch(updateBooking(booking));
+      dispatch(updateBooking(booking, "CONTAINER"));
       navigate("/booking");
     } else {
-      dispatch(addNewBooking(booking));
+      dispatch(updateBooking(booking, "CONTAINER"));
     }
   };
 
@@ -129,216 +230,220 @@ const AddContainer: React.FC<IAddContainer> = ({ id }) => {
     <Container component="main" maxWidth="xl">
       <CssBaseline />
       <form
+        onSubmit={handleSubmit(onSubmit, onError)}
         noValidate
-        onSubmit={handleSubmit(submitHandler)}
         style={{ marginTop: 3 }}
       >
         <Grid container spacing={2}>
-          <Grid item xs={12} md={6}>
-            <Grid item container spacing={2}>
-              <Grid item xs={12}>
-                <Controller
-                  control={control}
-                  name="shipper"
-                  rules={{ required: true }}
-                  render={({ field: { onChange, value } }) => (
-                    <Autocomplete
-                      id="shipper"
-                      value={value}
-                      onChange={(event, item) => {
-                        onChange(item);
-                      }}
-                      options={shipperData}
-                      getOptionLabel={(option) =>
-                        option.eventName ? option.eventName : ""
-                      }
-                      isOptionEqualToValue={(option, value) =>
-                        option.eventName === value.eventName
-                      }
-                      renderInput={(params: any) => (
-                        <TextField
-                          {...params}
-                          label="Shipper"
-                          error={!!errors.shipper}
-                          helperText={errors.shipper && "Shipper is required"}
-                          size="small"
-                        />
-                      )}
+          <Grid item xs={12} md={2}>
+            <Controller
+              control={control}
+              name="bookingNo"
+              rules={{ required: true }}
+              render={({ field: { onChange, value } }) => (
+                <Autocomplete
+                  id="bookingNo"
+                  onChange={(event, item) => {
+                    onChange(item);
+                  }}
+                  value={value}
+                  options={bookingData}
+                  getOptionLabel={(option) =>
+                    option.bookingNo ? option.bookingNo : ""
+                  }
+                  isOptionEqualToValue={(option, value) =>
+                    option.bookingNo === value.bookingNo
+                  }
+                  renderInput={(params: any) => (
+                    <TextField
+                      {...params}
+                      label="Booking NO"
+                      error={!!errors.bookingNo}
+                      helperText={errors.bookingNo && "Booking No is required"}
+                      size="small"
                     />
                   )}
                 />
-              </Grid>
-            </Grid>
+              )}
+            />
           </Grid>
 
-          <Grid item xs={12} md={12}>
-            <fieldset>
-              <legend>Container Details</legend>
-              <Grid item container spacing={2}>
-                <Grid item xs={12} md={2}>
-                  <Controller
-                    control={control}
-                    name="container"
-                    defaultValue=""
-                    rules={{ required: true }}
-                    render={({ field }) => (
+          <Grid item xs={12} md={10}>
+            <Tooltip title="Add More Containers">
+              <Fab
+                color="success"
+                size="small"
+                onClick={() =>
+                  append({
+                    containerNo: "",
+                    containerType: {
+                      type: "20 GP",
+                      abbr: "20",
+                    },
+                    sealNo: "",
+                    noOfPackages: 0,
+                    grossWt: 0,
+                    netWt: 0,
+                    cbm: 0,
+                  })
+                }
+              >
+                <Add />
+              </Fab>
+            </Tooltip>
+          </Grid>
+
+          <Grid item xs={12}>
+            {fields.map((item, index) => (
+              <Grid container spacing={1} key={item.id}>
+                <Grid item xs={12} md={1.5}>
+                  <TextField
+                    label="Container No"
+                    {...register(`containers.${index}.containerNo`, {
+                      required: true,
+                      pattern: {
+                        value: /^[A-Za-z]{4}\d{7}$/,
+                        message:
+                          "Container must be exactly 11 characters, with the first four being letters and the last seven being numbers",
+                      },
+                    })}
+                    error={!!errors.containers?.[index]?.containerNo}
+                    helperText={
+                      errors.containers?.[index]?.containerNo?.message
+                    }
+                    size={"small"}
+                    // InputProps={{ inputProps: { min: 11, max: 11} }}
+                  />
+                </Grid>
+                <Grid item xs={12} md={1.5}>
+                  <Autocomplete
+                    id="containerType"
+                    {...register(`containers.${index}.containerType`, {
+                      required: true,
+                    })}
+                    options={containerDataType}
+                    getOptionLabel={(option) =>
+                      option.type ? option.type : ""
+                    }
+                    isOptionEqualToValue={(option, value) =>
+                      option.type === value.type
+                    }
+                    renderInput={(params: any) => (
                       <TextField
-                        {...field}
-                        fullWidth
-                        id="container"
-                        label="Container #"
-                        required
-                        error={!!errors.container}
+                        {...params}
+                        label="Container Type"
+                        error={!!errors.containers?.[index]?.containerType}
                         helperText={
-                          errors.container && "Container is required!"
+                          errors.containers?.[index]?.containerType?.message &&
+                          "Container Type is required"
                         }
                         size="small"
+                        name={`containers.${index}.containerType`}
                       />
                     )}
                   />
                 </Grid>
-
-                <Grid item xs={12} md={2}>
-                  <Controller
-                    control={control}
-                    name="containerType"
-                    rules={{ required: true }}
-                    render={({ field: { onChange, value } }) => (
-                      <Autocomplete
-                        id="containerType"
-                        value={value}
-                        onChange={(event, item) => {
-                          onChange(item);
-                        }}
-                        options={containerTypeData}
-                        getOptionLabel={(option) =>
-                          option.eventName ? option.eventName : ""
-                        }
-                        isOptionEqualToValue={(option, value) =>
-                          option.eventName === value.eventName
-                        }
-                        renderInput={(params: any) => (
-                          <TextField
-                            {...params}
-                            label="Container Type"
-                            error={!!errors.containerType}
-                            helperText={
-                              errors.containerType &&
-                              "Container Type is required"
-                            }
-                            size="small"
-                          />
-                        )}
-                      />
-                    )}
+                <Grid item xs={12} md={1.5}>
+                  <TextField
+                    label="Seal No"
+                    {...register(`containers.${index}.sealNo`, {
+                      required: true,
+                    })}
+                    error={!!errors.containers?.[index]?.sealNo}
+                    helperText={errors.containers?.[index]?.sealNo?.message}
+                    size={"small"}
                   />
                 </Grid>
-
-                <Grid item xs={12} md={2}>
-                  <Controller
-                    control={control}
-                    name="sealNo"
-                    defaultValue=""
-                    rules={{ required: true }}
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        fullWidth
-                        id="sealNo"
-                        label="Seal #"
-                        // required
-                        // error={!!errors.sealNo}
-                        // helperText={
-                        //   errors.sealNo && "Seal No is required!"
-                        // }
-                        size="small"
-                      />
-                    )}
+                <Grid item xs={12} md={1.5}>
+                  <TextField
+                    label="No of Packages"
+                    {...register(`containers.${index}.noOfPackages`, {
+                      required: true,
+                    })}
+                    error={!!errors.containers?.[index]?.noOfPackages}
+                    helperText={
+                      errors.containers?.[index]?.noOfPackages?.message
+                    }
+                    type="number"
+                    InputProps={{ inputProps: { min: 1 } }}
+                    size={"small"}
                   />
                 </Grid>
-
-                <Grid item xs={12} md={2}>
-                  <Controller
-                    control={control}
-                    name="containerNoOfPackages"
-                    defaultValue=""
-                    rules={{ required: true }}
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        fullWidth
-                        id="containerNoOfPackages"
-                        label="# of Packages"
-                        required
-                        error={!!errors.containerNoOfPackages}
-                        helperText={
-                          errors.containerNoOfPackages &&
-                          "Number of packages is required!"
-                        }
-                        size="small"
-                        type="number"
-                      />
-                    )}
+                <Grid item xs={12} md={1.5}>
+                  <TextField
+                    label="Gross Wt"
+                    {...register(`containers.${index}.grossWt`, {
+                      required: true,
+                    })}
+                    error={!!errors.containers?.[index]?.grossWt}
+                    helperText={errors.containers?.[index]?.grossWt?.message}
+                    type="number"
+                    InputProps={{ inputProps: { min: 0 } }}
+                    size={"small"}
                   />
                 </Grid>
-
-                <Grid item xs={12} md={2}>
-                  <Controller
-                    control={control}
-                    name="containerGrossWt"
-                    defaultValue=""
-                    rules={{ required: true }}
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        fullWidth
-                        id="containerGrossWt"
-                        label="Gross Wt"
-                        required
-                        error={!!errors.containerGrossWt}
-                        helperText={
-                          errors.containerGrossWt && "Gross Wt is required!"
-                        }
-                        size="small"
-                        type="number"
-                      />
-                    )}
+                <Grid item xs={12} md={1.5}>
+                  <TextField
+                    label="Net Wt"
+                    {...register(`containers.${index}.netWt`)}
+                    // error={!!errors.containers?.[index]?.netWt}
+                    // helperText={errors.containers?.[index]?.netWt?.message}
+                    type="number"
+                    InputProps={{ inputProps: { min: 0 } }}
+                    size={"small"}
                   />
                 </Grid>
+                <Grid item xs={12} md={1.5}>
+                  <TextField
+                    label="CBM"
+                    {...register(`containers.${index}.cbm`)}
+                    // error={!!errors.containers?.[index]?.cbm}
+                    // helperText={errors.containers?.[index]?.cbm?.message}
+                    type="number"
+                    InputProps={{ inputProps: { min: 0 } }}
+                    size={"small"}
+                  />
 
+                  {/* <Button type="button" onClick={() => remove(index)}>
+                Remove
+              </Button> */}
+                </Grid>
                 <Grid item xs={12} md={1}>
-                  <Controller
-                    control={control}
-                    name="containercbm"
-                    defaultValue=""
-                    rules={{ required: true }}
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        fullWidth
-                        id="containercbm"
-                        label="CBM"
-                        // required
-                        // error={!!errors.netWt}
-                        // helperText={errors.grossWt && "Net Wt is required!"}
+                  {/* {index !== 0 && ( */}
+                  <Box sx={{ display: "flex", justifyContent: "end" }}>
+                    <Tooltip title="Remove Container">
+                      <Fab
+                        color="error"
                         size="small"
-                        type="number"
-                      />
-                    )}
-                  />
-                </Grid>
-
-                <Grid item xs={12} md={1}>
-                  <Fab color="primary" aria-label="add" size="small">
-                    <Add />
-                  </Fab>
-                  <Fab color="primary" aria-label="add" size="small">
-                    <Remove />
-                  </Fab>
+                        onClick={() => remove(index)}
+                      >
+                        <Remove />
+                      </Fab>
+                    </Tooltip>
+                  </Box>
+                  {/* )} */}
                 </Grid>
               </Grid>
-            </fieldset>
+            ))}
           </Grid>
+          {/* <Button
+            type="button"
+            onClick={() =>
+              append({
+                containerNo: "",
+                containerType: "",
+                sealNo: "",
+                noOfPackages: 0,
+                grossWt: 0,
+                netWt: 0,
+                cbm: 0,
+              })
+            }
+          >
+            Add Phone Number
+          </Button> */}
+
+          {/* <Button type="submit">Submit</Button> */}
 
           <Grid item xs={6}>
             <Button

@@ -13,6 +13,10 @@ import {
   TBillHead,
   TCommodity,
   TSeaPorts,
+  TInvoice,
+  TContainerType,
+  TBasisType,
+  TCurrency,
 } from "../Types";
 
 //STATE INTERFACEs
@@ -29,6 +33,15 @@ export interface IBillHeadState {
   filteredBillHeads: TBillHead[];
   currentBillHead: TBillHead | null;
   status: any;
+}
+
+export interface IInvoiceState {
+  invoices: TInvoice[];
+  filteredInvoices: TInvoice[];
+  currentInvoices: TInvoice | null;
+  status: any;
+  printInvoice: TInvoice | null;
+  lastSavedRecord: TInvoice | null;
 }
 
 export interface IProfitCenterState {
@@ -73,7 +86,6 @@ export interface ISeaPortsState {
   status: any;
 }
 
-
 export interface IContractState {
   contracts: TContract[];
   filteredContracts: TContract[];
@@ -111,6 +123,27 @@ export interface IGSTState {
   gst: TGST[];
   filteredGST: TGST[];
   currentGST: TGST | null;
+  status: any;
+}
+
+export interface IContainerTypeState {
+  containerTypes: TContainerType[];
+  filteredContainerTypes: TContainerType[];
+  currentContainerTypes: TContainerType | null;
+  status: any;
+}
+
+export interface IBasisTypeState {
+  basisTypes: TBasisType[];
+  filteredBasisTypes: TBasisType[];
+  currentBasisTypes: TBasisType | null;
+  status: any;
+}
+
+export interface ICurrencyState {
+  currency: TCurrency[];
+  filteredCurrency: TCurrency[];
+  currentCurrency: TCurrency | null;
   status: any;
 }
 

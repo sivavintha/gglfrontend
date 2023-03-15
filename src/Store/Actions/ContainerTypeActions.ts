@@ -1,40 +1,40 @@
 import { spinnerActions } from "../Reducers/SpinnerReducer";
 import Api from "../../Services";
-import { TBooking } from "../../Types";
-import { bookingActions } from "../Reducers/BookingReducer";
+import { TContainerType } from "../../Types";
+import { containerTypeActions } from "../Reducers/ContainerTypeReducer";
 
-export const getBookings = (hideMessage?: boolean) => {
+export const getContainerType = (hideMessage?: boolean) => {
   return async (dispatch: any) => {
     dispatch(spinnerActions.setLoading(true));
-    Api("booking/all", "GET", {}, "", true)
+    Api("containertype/all", "GET", {}, "", true)
       .then(async (result: any) => {
         if (result) {
           await dispatch(
-            bookingActions.fetchBookings({
-              bookings: result.data,
+            containerTypeActions.fetchContainerType({
+              containerType: result.data,
             })
           );
           !hideMessage &&
             (await dispatch(
-              bookingActions.setStatus({
+              containerTypeActions.setStatus({
                 statusType: "success",
-                message: "Booking fetched successfully!",
+                message: "ContainerType fetched successfully!",
               })
             ));
         } else {
           await dispatch(
-            bookingActions.setStatus({
+            containerTypeActions.setStatus({
               statusType: "error",
-              message: "Booking fetching failed!",
+              message: "ContainerType fetching failed!",
             })
           );
         }
       })
       .catch(async (error) => {
         await dispatch(
-          bookingActions.setStatus({
+          containerTypeActions.setStatus({
             statusType: "error",
-            message: "Booking fetching failed: " + error,
+            message: "ContainerType fetching failed: " + error,
           })
         );
       })
@@ -44,32 +44,32 @@ export const getBookings = (hideMessage?: boolean) => {
   };
 };
 
-export const getBookingById = (bookingId: string) => {
+export const getContainerTypeById = (containerTypeId: string) => {
   return async (dispatch: any) => {
     dispatch(spinnerActions.setLoading(true));
 
-    Api("booking/" + bookingId, "GET", {}, "", true)
+    Api("containertype/" + containerTypeId, "GET", {}, "", true)
       .then(async (result: any) => {
         if (result) {
           await dispatch(
-            bookingActions.fetchBookingById({
-              booking: result.data,
+            containerTypeActions.fetchContainerTypeById({
+              containerType: result.data,
             })
           );
         } else {
           await dispatch(
-            bookingActions.setStatus({
+            containerTypeActions.setStatus({
               statusType: "error",
-              message: "Booking fetching failed!",
+              message: "ContainerType fetching failed!",
             })
           );
         }
       })
       .catch(async (error) => {
         await dispatch(
-          bookingActions.setStatus({
+          containerTypeActions.setStatus({
             statusType: "error",
-            message: "Booking fetching failed: " + error,
+            message: "ContainerType fetching failed: " + error,
           })
         );
       })
@@ -79,24 +79,23 @@ export const getBookingById = (bookingId: string) => {
   };
 };
 
-export const addNewBooking = (booking: TBooking) => {
+export const addNewContainerType = (containerType: TContainerType) => {
   return async (dispatch: any) => {
     dispatch(spinnerActions.setLoading(true));
 
-    Api("booking/create", "POST", booking, "", true)
+    Api("containertype/create", "POST", containerType, "", true)
       .then(async (result: any) => {
         if (result.status) {
-          const bookingNo = result.data.bookingNo || "";
-          await dispatch(getBookings(true));
+          await dispatch(getContainerType(true));
           await dispatch(
-            bookingActions.setStatus({
+            containerTypeActions.setStatus({
               statusType: "success",
-              message: `Booking ${bookingNo} Added successfully!`,
+              message: "Added successfully!",
             })
           );
         } else {
           await dispatch(
-            bookingActions.setStatus({
+            containerTypeActions.setStatus({
               statusType: "error",
               message: "Failed! " + result.message,
             })
@@ -105,9 +104,9 @@ export const addNewBooking = (booking: TBooking) => {
       })
       .catch(async (error) => {
         await dispatch(
-          bookingActions.setStatus({
+          containerTypeActions.setStatus({
             statusType: "error",
-            message: "Booking adding failed! error = " + error,
+            message: "ContainerType adding failed! error = " + error,
           })
         );
       })
@@ -117,46 +116,34 @@ export const addNewBooking = (booking: TBooking) => {
   };
 };
 
-export const updateBooking = (booking: any, type: string) => {
+export const updateContainerType = (containerType: TContainerType) => {
   return async (dispatch: any) => {
     dispatch(spinnerActions.setLoading(true));
-    let url = "booking/update";
-    if (type === "GENERAL") {
-      url += "/general";
-    } else if (type === "SCHEDULE") {
-      url += "/schedule";
-    } else if (type === "RATES") {
-      url += "/rates";
-    } else if (type === "CONTAINER") {
-      url += "/container";
-    } else if (type === "EVENTS") {
-      url += "/events";
-    }
 
-    Api(url, "PUT", booking, "", true)
+    Api("containertype/update", "PUT", containerType, "", true)
       .then(async (result: any) => {
         if (result) {
-          await dispatch(getBookings(true));
+          await dispatch(getContainerType(true));
           await dispatch(
-            bookingActions.setStatus({
+            containerTypeActions.setStatus({
               statusType: "success",
-              message: "Booking updated successfully!",
+              message: "ContainerType updated successfully!",
             })
           );
         } else {
           await dispatch(
-            bookingActions.setStatus({
+            containerTypeActions.setStatus({
               statusType: "error",
-              message: "Booking updation failed!",
+              message: "ContainerType updation failed!",
             })
           );
         }
       })
       .catch(async (error) => {
         await dispatch(
-          bookingActions.setStatus({
+          containerTypeActions.setStatus({
             statusType: "error",
-            message: "Booking updation failed! error = " + error,
+            message: "ContainerType updation failed! error = " + error,
           })
         );
       })
@@ -166,34 +153,34 @@ export const updateBooking = (booking: any, type: string) => {
   };
 };
 
-export const deleteBookingById = (bookingId: string) => {
+export const deleteContainerTypeById = (containerTypeId: string) => {
   return async (dispatch: any) => {
     dispatch(spinnerActions.setLoading(true));
 
-    Api("booking/" + bookingId, "DELETE", {}, "", true)
+    Api("containertype/" + containerTypeId, "DELETE", {}, "", true)
       .then(async (result: any) => {
         if (result) {
-          await dispatch(getBookings(true));
+          await dispatch(getContainerType(true));
           await dispatch(
-            bookingActions.setStatus({
+            containerTypeActions.setStatus({
               statusType: "success",
-              message: "Booking deleted successfully!",
+              message: "ContainerType deleted successfully!",
             })
           );
         } else {
           await dispatch(
-            bookingActions.setStatus({
+            containerTypeActions.setStatus({
               statusType: "error",
-              message: "Booking deletion failed!",
+              message: "ContainerType deletion failed!",
             })
           );
         }
       })
       .catch(async (error) => {
         await dispatch(
-          bookingActions.setStatus({
+          containerTypeActions.setStatus({
             statusType: "error",
-            message: "Booking deletion failed! error = " + error,
+            message: "ContainerType deletion failed! error = " + error,
           })
         );
       })

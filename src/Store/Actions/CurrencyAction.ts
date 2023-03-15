@@ -1,40 +1,40 @@
 import { spinnerActions } from "../Reducers/SpinnerReducer";
 import Api from "../../Services";
-import { TBooking } from "../../Types";
-import { bookingActions } from "../Reducers/BookingReducer";
+import { TCurrency } from "../../Types";
+import { currencyActions } from "../Reducers/CurrencyReducer";
 
-export const getBookings = (hideMessage?: boolean) => {
+export const getCurrency = (hideMessage?: boolean) => {
   return async (dispatch: any) => {
     dispatch(spinnerActions.setLoading(true));
-    Api("booking/all", "GET", {}, "", true)
+    Api("currency/all", "GET", {}, "", true)
       .then(async (result: any) => {
         if (result) {
           await dispatch(
-            bookingActions.fetchBookings({
-              bookings: result.data,
+            currencyActions.fetchCurrency({
+              currency: result.data,
             })
           );
           !hideMessage &&
             (await dispatch(
-              bookingActions.setStatus({
+              currencyActions.setStatus({
                 statusType: "success",
-                message: "Booking fetched successfully!",
+                message: "Currency fetched successfully!",
               })
             ));
         } else {
           await dispatch(
-            bookingActions.setStatus({
+            currencyActions.setStatus({
               statusType: "error",
-              message: "Booking fetching failed!",
+              message: "Currency fetching failed!",
             })
           );
         }
       })
       .catch(async (error) => {
         await dispatch(
-          bookingActions.setStatus({
+          currencyActions.setStatus({
             statusType: "error",
-            message: "Booking fetching failed: " + error,
+            message: "Currency fetching failed: " + error,
           })
         );
       })
@@ -44,32 +44,32 @@ export const getBookings = (hideMessage?: boolean) => {
   };
 };
 
-export const getBookingById = (bookingId: string) => {
+export const getCurrencyById = (currencyId: string) => {
   return async (dispatch: any) => {
     dispatch(spinnerActions.setLoading(true));
 
-    Api("booking/" + bookingId, "GET", {}, "", true)
+    Api("currency/" + currencyId, "GET", {}, "", true)
       .then(async (result: any) => {
         if (result) {
           await dispatch(
-            bookingActions.fetchBookingById({
-              booking: result.data,
+            currencyActions.fetchCurrencyById({
+              currency: result.data,
             })
           );
         } else {
           await dispatch(
-            bookingActions.setStatus({
+            currencyActions.setStatus({
               statusType: "error",
-              message: "Booking fetching failed!",
+              message: "Currency fetching failed!",
             })
           );
         }
       })
       .catch(async (error) => {
         await dispatch(
-          bookingActions.setStatus({
+          currencyActions.setStatus({
             statusType: "error",
-            message: "Booking fetching failed: " + error,
+            message: "Currency fetching failed: " + error,
           })
         );
       })
@@ -79,24 +79,23 @@ export const getBookingById = (bookingId: string) => {
   };
 };
 
-export const addNewBooking = (booking: TBooking) => {
+export const addNewCurrency = (currency: TCurrency) => {
   return async (dispatch: any) => {
     dispatch(spinnerActions.setLoading(true));
 
-    Api("booking/create", "POST", booking, "", true)
+    Api("currency/create", "POST", currency, "", true)
       .then(async (result: any) => {
         if (result.status) {
-          const bookingNo = result.data.bookingNo || "";
-          await dispatch(getBookings(true));
+          await dispatch(getCurrency(true));
           await dispatch(
-            bookingActions.setStatus({
+            currencyActions.setStatus({
               statusType: "success",
-              message: `Booking ${bookingNo} Added successfully!`,
+              message: "Added successfully!",
             })
           );
         } else {
           await dispatch(
-            bookingActions.setStatus({
+            currencyActions.setStatus({
               statusType: "error",
               message: "Failed! " + result.message,
             })
@@ -105,9 +104,9 @@ export const addNewBooking = (booking: TBooking) => {
       })
       .catch(async (error) => {
         await dispatch(
-          bookingActions.setStatus({
+          currencyActions.setStatus({
             statusType: "error",
-            message: "Booking adding failed! error = " + error,
+            message: "Currency adding failed! error = " + error,
           })
         );
       })
@@ -117,46 +116,34 @@ export const addNewBooking = (booking: TBooking) => {
   };
 };
 
-export const updateBooking = (booking: any, type: string) => {
+export const updateCurrency = (currency: TCurrency) => {
   return async (dispatch: any) => {
     dispatch(spinnerActions.setLoading(true));
-    let url = "booking/update";
-    if (type === "GENERAL") {
-      url += "/general";
-    } else if (type === "SCHEDULE") {
-      url += "/schedule";
-    } else if (type === "RATES") {
-      url += "/rates";
-    } else if (type === "CONTAINER") {
-      url += "/container";
-    } else if (type === "EVENTS") {
-      url += "/events";
-    }
 
-    Api(url, "PUT", booking, "", true)
+    Api("currency/update", "PUT", currency, "", true)
       .then(async (result: any) => {
         if (result) {
-          await dispatch(getBookings(true));
+          await dispatch(getCurrency(true));
           await dispatch(
-            bookingActions.setStatus({
+            currencyActions.setStatus({
               statusType: "success",
-              message: "Booking updated successfully!",
+              message: "Currency updated successfully!",
             })
           );
         } else {
           await dispatch(
-            bookingActions.setStatus({
+            currencyActions.setStatus({
               statusType: "error",
-              message: "Booking updation failed!",
+              message: "Currency updation failed!",
             })
           );
         }
       })
       .catch(async (error) => {
         await dispatch(
-          bookingActions.setStatus({
+          currencyActions.setStatus({
             statusType: "error",
-            message: "Booking updation failed! error = " + error,
+            message: "Currency updation failed! error = " + error,
           })
         );
       })
@@ -166,34 +153,34 @@ export const updateBooking = (booking: any, type: string) => {
   };
 };
 
-export const deleteBookingById = (bookingId: string) => {
+export const deleteCurrencyById = (currencyId: string) => {
   return async (dispatch: any) => {
     dispatch(spinnerActions.setLoading(true));
 
-    Api("booking/" + bookingId, "DELETE", {}, "", true)
+    Api("currency/" + currencyId, "DELETE", {}, "", true)
       .then(async (result: any) => {
         if (result) {
-          await dispatch(getBookings(true));
+          await dispatch(getCurrency(true));
           await dispatch(
-            bookingActions.setStatus({
+            currencyActions.setStatus({
               statusType: "success",
-              message: "Booking deleted successfully!",
+              message: "Currency deleted successfully!",
             })
           );
         } else {
           await dispatch(
-            bookingActions.setStatus({
+            currencyActions.setStatus({
               statusType: "error",
-              message: "Booking deletion failed!",
+              message: "Currency deletion failed!",
             })
           );
         }
       })
       .catch(async (error) => {
         await dispatch(
-          bookingActions.setStatus({
+          currencyActions.setStatus({
             statusType: "error",
-            message: "Booking deletion failed! error = " + error,
+            message: "Currency deletion failed! error = " + error,
           })
         );
       })

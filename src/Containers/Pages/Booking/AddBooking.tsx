@@ -5,13 +5,12 @@ import {
   TextField,
   Grid,
   Container,
-  Fab,
   FormControlLabel,
   Radio,
   RadioGroup,
   Autocomplete,
 } from "@mui/material";
-import { useForm, Controller, FormProvider } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { useAppDispatch, useAppSelector } from "../../../Hooks";
 import {
   addNewBooking,
@@ -20,10 +19,8 @@ import {
 } from "../../../Store/Actions/BookingActions";
 import { bookingActions } from "../../../Store/Reducers/BookingReducer";
 
-import CountrySelector from "../../../Components/CountrySelector";
-import { Add, Cancel, Remove, Save } from "@mui/icons-material";
+import { Cancel, Save } from "@mui/icons-material";
 import { useLocation, useNavigate } from "react-router";
-import { color } from "@mui/system";
 import {
   getCustomerVendors,
   getVendors,
@@ -71,16 +68,6 @@ const AddBooking: React.FC<IAddBooking> = ({ id }) => {
     { terms: "Collect", abbr: "C" },
   ];
 
-  // const containerTypeData = [
-  //   { type: "20 GP", name: "20 GP" },
-  //   { type: "40 GP", name: "40 GP" },
-  //   { type: "20 HC", name: "20 HC" },
-  //   { type: "40 HC", name: "40 HC" },
-  //   { type: "45 HC", name: "45 HC" },
-
-  //   { type: "20 Reefer", name: "20 Reefer" },
-  //   { type: "40 Reefer", name: "40 Reefer" },
-  // ];
   const blTypeData = [{ type: "Direct" }, { type: "House" }];
 
   const currentStatus = useAppSelector((state) => state.booking.status);
@@ -94,12 +81,32 @@ const AddBooking: React.FC<IAddBooking> = ({ id }) => {
     operation: "EXPORT",
     shipmentType: "FCL",
 
-    shipper:
-      shipperData && shipperData.length > 0 ? shipperData[0] : { name: "" },
+    shipper: shipperData && shipperData.length > 0 ? shipperData[0] : null,
+    consignee:
+      consigneeData && consigneeData.length > 0 ? consigneeData[0] : null,
+    notifier: notifierData && notifierData.lenght > 0 ? notifierData[0] : null,
+    overseasAgent:
+      overseasAgentData && overseasAgentData.length > 0
+        ? overseasAgentData[0]
+        : null,
+    deliveryAgent:
+      deliveryAgentData && deliveryAgentData.length > 0
+        ? deliveryAgentData[0]
+        : null,
+    line: lineData && lineData.length > 0 ? lineData[0] : null,
+    CHA: CHAData && CHAData.length > 0 ? CHAData[0] : null,
+    transporter:
+      transporterData && transporterData.length > 0 ? transporterData[0] : null,
+    pol: portData && portData.length > 0 ? portData[0] : null,
+    pod: portData && portData.length > 0 ? portData[0] : null,
+    commodity:
+      commodityData && commodityData.length > 0 ? commodityData[0] : null,
+    mblTerms: blTermsData && blTermsData.length > 0 ? blTermsData[0] : null,
+    hblTerms: blTermsData && blTermsData.length > 0 ? blTermsData[0] : null,
+    blType: blTypeData && blTypeData.length > 0 ? blTypeData[0] : null,
   };
 
   const {
-    register,
     handleSubmit,
     control,
     formState: { errors },
@@ -111,18 +118,18 @@ const AddBooking: React.FC<IAddBooking> = ({ id }) => {
   const onError = (errors: any, e: any) => console.log(errors, e);
 
   React.useEffect(() => {
-    dispatch(getCustomerVendors("CUSTOMER", false));
-    dispatch(getVendors("VENDOR", false));
+    dispatch(getCustomerVendors("CUSTOMER", true));
+    dispatch(getVendors("VENDOR", true));
 
-    dispatch(getSeaPorts(false));
-    dispatch(getCommodity(false));
+    dispatch(getSeaPorts(true));
+    dispatch(getCommodity(true));
   }, [dispatch]);
 
   React.useEffect(() => {
     if (currentStatus && currentStatus.type === "success") {
       reset();
     }
-  }, [currentStatus]);
+  }, [currentStatus, reset]);
 
   React.useEffect(() => {
     if (customerData && customerData.length > 0) {
@@ -168,76 +175,54 @@ const AddBooking: React.FC<IAddBooking> = ({ id }) => {
     } else {
       dispatch(bookingActions.fetchBookingById({ booking: null }));
     }
-  }, [bookingId]);
+  }, [bookingId, dispatch]);
 
   React.useEffect(() => {
     if (currentBooking) {
       console.log("currentBooking ===>", currentBooking);
-      setValue(
-        "shipper",
-        currentBooking.shipper //? currentBooking.shipper : { _id: "", name: "" }
-      );
-      // setValue(
-      //   "consignee",
-      //   currentBooking.consignee
-      //   // ? currentBooking.consignee
-      //   // : { _id: "", name: "" }
-      // );
-      // setValue(
-      //   "notifier",
-      //   currentBooking.notifier
-      //   // ? currentBooking.notifier
-      //   // : { _id: "", name: "" }
-      // );
-      // setValue(
-      //   "line",
-      //   currentBooking.line //? currentBooking.line : { _id: "", name: "" }
-      // );
-      // setValue(
-      //   "overseasAgent",
-      //   currentBooking.overseasAgent
-      //   // ? currentBooking.overseasAgent
-      //   // : { _id: "", name: "" }
-      // );
-      // setValue(
-      //   "deliveryAgent",
-      //   currentBooking.deliveryAgent
-      //   // ? currentBooking.deliveryAgent
-      //   // : { _id: "", name: "" }
-      // );
-      // setValue(
-      //   "transporter",
-      //   currentBooking.transporter
-      //   // ? currentBooking.transporter
-      //   // : { _id: "", name: "" }
-      // );
-      // setValue(
-      //   "CHA",
-      //   currentBooking.CHA //? currentBooking.CHA : { _id: "", name: "" }
-      // );
-      // setValue(
-      //   "commodity",
-      //   currentBooking.commodity
-      //   // ? currentBooking.commodity
-      //   // : { _id: "", commodityName: "" }
-      // );
-      // setValue(
-      //   "pol",
-      //   currentBooking.pol //? currentBooking.pol : { _id: "", portName: "" }
-      // );
-      // setValue(
-      //   "pod",
-      //   currentBooking.pod //? currentBooking.pod : { _id: "", portName: "" }
-      // );
+      setValue("shipper", currentBooking.shipper);
+      setValue("consignee", currentBooking.consignee);
+      setValue("notifier", currentBooking.notifier);
+      setValue("line", currentBooking.line);
+      setValue("overseasAgent", currentBooking.overseasAgent);
+      setValue("deliveryAgent", currentBooking.deliveryAgent);
+      setValue("transporter", currentBooking.transporter);
+      setValue("CHA", currentBooking.CHA);
+      setValue("commodity", currentBooking.commodity);
+      setValue("pol", currentBooking.pol);
+      setValue("pod", currentBooking.pod);
 
       setValue("finalDestination", currentBooking.finalDestination);
-    } else {
-      reset(DEFAULT_FORM_VALUES);
+      setValue("blNo", currentBooking.blNo);
+      const bltype = blTypeData.filter(
+        (bltype) => bltype.type === currentBooking.blType
+      );
+      setValue("blType", bltype[0]);
+      const mblterms = blTermsData.filter(
+        (blterm) => blterm.terms === currentBooking.mblTerms
+      );
+      setValue("mblTerms", mblterms[0]);
+      const hblterms = blTermsData.filter(
+        (blterm) => blterm.terms === currentBooking.hblTerms
+      );
+      setValue("hblTerms", hblterms[0]);
+      setValue("vessel", currentBooking.vessel);
+      setValue("voyage", currentBooking.voyage);
+      setValue("noOfPackages", currentBooking.noOfPackages);
+      setValue("grossWt", currentBooking.grossWt);
+      setValue("netWt", currentBooking.netWt);
+      setValue("cbm", currentBooking.cbm);
+      setValue("description", currentBooking.description);
+      setValue("remarks", currentBooking.remarks);
+
+      setValue("ourRefNo", currentBooking.ourRefNo);
+      setValue("exrate", currentBooking.exrate);
     }
   }, [currentBooking]);
 
   const submitHandler = (data: any, event: any) => {
     event.preventDefault();
+
     console.log("data ===>", data);
     const booking = { ...data };
     booking.blType = data.blType ? data.blType.type : null;
@@ -262,7 +247,7 @@ const AddBooking: React.FC<IAddBooking> = ({ id }) => {
 
     if (bookingId) {
       booking._id = bookingId;
-      dispatch(updateBooking(booking));
+      dispatch(updateBooking(booking, "GENERAL"));
       navigate("/booking");
     } else {
       dispatch(addNewBooking(booking));
@@ -655,6 +640,48 @@ const AddBooking: React.FC<IAddBooking> = ({ id }) => {
                   )}
                 />
               </Grid>
+
+              <Grid item xs={12} md={4}>
+                <Controller
+                  control={control}
+                  name="ourRefNo"
+                  defaultValue=""
+                  // rules={{ required: true }}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      id="ourRefNo"
+                      label="Our Ref #"
+                      // required
+                      // error={!!errors.blNo}
+                      // helperText={errors.blNo && "BLNO is required!"}
+                      size="small"
+                    />
+                  )}
+                />
+              </Grid>
+
+              <Grid item xs={12} md={4}>
+                <Controller
+                  control={control}
+                  name="exrate"
+                  defaultValue=""
+                  // rules={{ required: true }}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      id="exrate"
+                      label="ExRate"
+                      // required
+                      // error={!!errors.blNo}
+                      // helperText={errors.blNo && "BLNO is required!"}
+                      size="small"
+                    />
+                  )}
+                />
+              </Grid>
             </Grid>
           </Grid>
           <Grid item xs={12} md={6}>
@@ -950,7 +977,7 @@ const AddBooking: React.FC<IAddBooking> = ({ id }) => {
                   control={control}
                   name="noOfPackages"
                   defaultValue=""
-                  // rules={{ required: true }}
+                  rules={{ required: true }}
                   render={({ field }) => (
                     <TextField
                       {...field}
@@ -958,10 +985,10 @@ const AddBooking: React.FC<IAddBooking> = ({ id }) => {
                       id="noOfPackages"
                       label="# of Packages"
                       required
-                      // error={!!errors.noOfPackages}
-                      // helperText={
-                      //   errors.noOfPackages && "Number of packages is required!"
-                      // }
+                      error={!!errors.noOfPackages}
+                      helperText={
+                        errors.noOfPackages && "Number of packages is required!"
+                      }
                       size="small"
                       type="number"
                     />
@@ -973,7 +1000,7 @@ const AddBooking: React.FC<IAddBooking> = ({ id }) => {
                 <Controller
                   control={control}
                   name="grossWt"
-                  // defaultValue=""
+                  defaultValue=""
                   rules={{ required: true }}
                   render={({ field }) => (
                     <TextField
@@ -982,8 +1009,8 @@ const AddBooking: React.FC<IAddBooking> = ({ id }) => {
                       id="grossWt"
                       label="Gross Wt"
                       required
-                      // error={!!errors.grossWt}
-                      // helperText={errors.grossWt && "Gross Wt is required!"}
+                      error={!!errors.grossWt}
+                      helperText={errors.grossWt && "Gross Wt is required!"}
                       size="small"
                       type="number"
                     />

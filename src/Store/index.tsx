@@ -14,6 +14,10 @@ import fyearReducer from "./Reducers/FyearReducer";
 import billHeadReducer from "./Reducers/BillHeadReducer";
 import commodityReducer from "./Reducers/CommodityReducer";
 import seaPortsReducer from "./Reducers/SeaPortsReducer";
+import invoiceReducer from "./Reducers/InvoiceReducer";
+import containerTypeReducer from "./Reducers/ContainerTypeReducer";
+import basisTypeReducer from "./Reducers/BasisTypeReducer";
+import currencyReducer from "./Reducers/CurrencyReducer";
 
 const store = configureStore({
   reducer: {
@@ -32,6 +36,10 @@ const store = configureStore({
     fyear: fyearReducer.reducer,
     commodity: commodityReducer.reducer,
     seaPorts: seaPortsReducer.reducer,
+    invoice: invoiceReducer.reducer,
+    currency: currencyReducer.reducer,
+    containerType: containerTypeReducer.reducer,
+    basisType: basisTypeReducer.reducer,
   },
 });
 

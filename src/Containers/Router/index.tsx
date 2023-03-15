@@ -42,7 +42,15 @@ const AddSeaPorts = React.lazy(
 const SeaPortsList = React.lazy(() => import("../Pages/MasterSeaPorts/index"));
 
 const AddBooking = React.lazy(() => import("../Pages/Booking/AddBooking"));
+const AddContainer = React.lazy(() => import("../Pages/Booking/AddContainer"));
+const AddSellRate = React.lazy(() => import("../Pages/Booking/AddSellRate"));
+const AddBuyRate = React.lazy(() => import("../Pages/Booking/AddBuyRate"));
+
 const BookingList = React.lazy(() => import("../Pages/Booking/index"));
+const InvoiceList = React.lazy(() => import("../Pages/Invoice/index"));
+const CreateInvoice = React.lazy(
+  () => import("../Pages/Invoice/CreateInvoice")
+);
 
 const AddContract = React.lazy(() => import("../Pages/Contracts/AddContract"));
 const ContractsList = React.lazy(() => import("../Pages/Contracts/index"));
@@ -139,6 +147,33 @@ const MainRouter = () => (
       />
 
       <Route
+        path="/addcontainer"
+        element={
+          <Layout>
+            <AddContainer />
+          </Layout>
+        }
+      />
+
+      <Route
+        path="/addsellrate"
+        element={
+          <Layout>
+            <AddSellRate />
+          </Layout>
+        }
+      />
+
+      <Route
+        path="/addbuyrate"
+        element={
+          <Layout>
+            <AddBuyRate />
+          </Layout>
+        }
+      />
+
+      <Route
         path="/master/commodity"
         element={
           <Layout>
@@ -156,6 +191,24 @@ const MainRouter = () => (
         }
       />
 
+      <Route
+        path="/invoice"
+        element={
+          <Layout>
+            <InvoiceList />
+          </Layout>
+        }
+      />
+
+      <Route
+        path="/createinvoice"
+        element={
+          <Layout>
+            <CreateInvoice />
+          </Layout>
+        }
+      />
+      
       <Route
         path="/contract"
         element={

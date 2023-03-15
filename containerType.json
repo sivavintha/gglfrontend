@@ -1,0 +1,66 @@
+[
+  {
+    "type": "20 GP",
+    "abbr": "20"
+  },
+  {
+    "type": "20 HC",
+    "abbr": "2H"
+  },
+  {
+    "type": "20 LCL",
+    "abbr": "2L"
+  },
+  {
+    "type": "20 FCL",
+    "abbr": "2F"
+  },
+  {
+    "type": "20 PART",
+    "abbr": "2P"
+  },
+  {
+    "type": "40 GP",
+    "abbr": "40"
+  },
+  {
+    "type": "40 HC",
+    "abbr": "4H"
+  },
+  {
+    "type": "40 FCL",
+    "abbr": "4F"
+  },
+  {
+    "type": "40 PART",
+    "abbr": "4P"
+  },
+  {
+    "type": "20 OT",
+    "abbr": "2T"
+  },
+  {
+    "type": "40 OT",
+    "abbr": "4T"
+  },
+  {
+    "type": "20 REEFER",
+    "abbr": "2R"
+  },
+  {
+    "type": "40 REEFER",
+    "abbr": "4R"
+  },
+  {
+    "type": "20 ISO TANKER",
+    "abbr": "2I"
+  },
+  {
+    "type": "40 ISO TANKER",
+    "abbr": "4I"
+  },
+  {
+    "type": "45 HC",
+    "abbr": "45"
+  }
+]

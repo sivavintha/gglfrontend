@@ -453,9 +453,9 @@ const AddSellRate = () => {
                         onChange={(event) => {
                           setValue(
                             `sellRate.${index}.qty`,
-                            parseInt(event.target.value)
+                            parseFloat(event.target.value)
                           );
-                          const qty = parseInt(event.target.value);
+                          const qty = parseFloat(event.target.value);
                           const exrate = getValues(`sellRate.${index}.exrate`);
 
                           const unitprice = getValues(

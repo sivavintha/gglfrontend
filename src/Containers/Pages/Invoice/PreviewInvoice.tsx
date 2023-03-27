@@ -50,7 +50,7 @@ const PreviewInvoice: React.FC<IPreviewInvoice> = ({ id }) => {
         console.log("bookingCount ===", formattedString);
 
         containers = printInvoice.bookingNo.containers.map(
-          (item: any) => item.containerNo
+          (item: any) => item.containerNo + "/" + item.containerType
         );
         console.log("containers ===", containers ? containers.join(", ") : []);
       }
@@ -88,7 +88,9 @@ const PreviewInvoice: React.FC<IPreviewInvoice> = ({ id }) => {
             ? rate.narration.gstSlab.igst
             : "";
         newObj.cgst =
-          rate.billingTo.stateTin === "33" && rate.narration.gstApplicable
+          !printInvoice.isUSDInvoice &&
+          rate.billingTo.stateTin === "33" &&
+          rate.narration.gstApplicable
             ? (rate.amount *
                 rate.qty *
                 rate.exrate *
@@ -96,7 +98,9 @@ const PreviewInvoice: React.FC<IPreviewInvoice> = ({ id }) => {
               100
             : 0;
         newObj.sgst =
-          rate.billingTo.stateTin === "33" && rate.narration.gstApplicable
+          !printInvoice.isUSDInvoice &&
+          rate.billingTo.stateTin === "33" &&
+          rate.narration.gstApplicable
             ? (rate.amount *
                 rate.qty *
                 rate.exrate *
@@ -104,7 +108,9 @@ const PreviewInvoice: React.FC<IPreviewInvoice> = ({ id }) => {
               100
             : 0;
         newObj.igst =
-          rate.billingTo.stateTin !== "33" && rate.narration.gstApplicable
+          !printInvoice.isUSDInvoice &&
+          rate.billingTo.stateTin !== "33" &&
+          rate.narration.gstApplicable
             ? (rate.amount *
                 rate.qty *
                 rate.exrate *
@@ -113,7 +119,9 @@ const PreviewInvoice: React.FC<IPreviewInvoice> = ({ id }) => {
             : 0;
         totalAmount += rate.amount;
         cgst +=
-          rate.billingTo.stateTin === "33" && rate.narration.gstApplicable
+          !printInvoice.isUSDInvoice &&
+          rate.billingTo.stateTin === "33" &&
+          rate.narration.gstApplicable
             ? (rate.amount *
                 rate.qty *
                 rate.exrate *
@@ -128,7 +136,9 @@ const PreviewInvoice: React.FC<IPreviewInvoice> = ({ id }) => {
         );
 
         sgst +=
-          rate.billingTo.stateTin === "33" && rate.narration.gstApplicable
+          !printInvoice.isUSDInvoice &&
+          rate.billingTo.stateTin === "33" &&
+          rate.narration.gstApplicable
             ? (rate.amount *
                 rate.qty *
                 rate.exrate *
@@ -136,7 +146,9 @@ const PreviewInvoice: React.FC<IPreviewInvoice> = ({ id }) => {
               100
             : 0;
         igst +=
-          rate.billingTo.stateTin !== "33" && rate.narration.gstApplicable
+          !printInvoice.isUSDInvoice &&
+          rate.billingTo.stateTin !== "33" &&
+          rate.narration.gstApplicable
             ? (rate.amount *
                 rate.qty *
                 rate.exrate *
@@ -162,6 +174,7 @@ const PreviewInvoice: React.FC<IPreviewInvoice> = ({ id }) => {
       invoiceData.totalSGST = sgst;
       invoiceData.totalIGST = igst;
       invoiceData.partyRates = newArray;
+      invoiceData.heading = printInvoice.isUSDInvoice ? "INVOICE" : "TAX INVOICE"
 
       console.log("emptyRow ===>", emptyRow);
       console.log("totalAmount ===>", totalAmount);

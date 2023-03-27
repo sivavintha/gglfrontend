@@ -9,6 +9,8 @@ import {
   Radio,
   RadioGroup,
   Autocomplete,
+  Switch,
+  FormGroup,
 } from "@mui/material";
 import { useForm, Controller, useWatch } from "react-hook-form";
 import { useAppDispatch, useAppSelector } from "../../../Hooks";
@@ -29,6 +31,8 @@ import CustomDialog from "../../../Components/CustomDialog";
 import { getBookings } from "../../../Store/Actions/BookingActions";
 import PreviewInvoice from "./PreviewInvoice";
 import moment from "moment";
+import { useSnackbar } from "notistack";
+
 
 interface IAddInvoice {
   id?: string;
@@ -52,6 +56,8 @@ const AddInvoice: React.FC<IAddInvoice> = ({ id }) => {
   );
   const [isFinalled, setIsFinalled] = React.useState(false);
   const [openDialog, setOpenDialog] = React.useState(false);
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+
 
   const vendorData = useAppSelector((state) => state.customerVendor.vendors);
   const bookingData = useAppSelector((state) => state.booking.bookings);
@@ -166,6 +172,21 @@ const AddInvoice: React.FC<IAddInvoice> = ({ id }) => {
     console.log("data ===>", data);
     const invoice = { ...data };
 
+    if(data.invoiceCategory === "CUSTOMER" && data.bookingNo.sellRate.length === 0){
+      enqueueSnackbar("Unable to save! Please enter the sellrate first.", {
+        variant: "error",
+      });
+      return;
+    }
+
+    if(data.invoiceCategory === "VENDOR" && data.bookingNo.buyRate.length === 0){
+      enqueueSnackbar("Unable to save! Please enter the buyrate first.", {
+        variant: "error",
+      });
+      return;
+    }
+
+
     invoice.fyear = currentFyear?._id;
     invoice.pc_code = currentProfitCenter?._id;
 
@@ -235,7 +256,7 @@ const AddInvoice: React.FC<IAddInvoice> = ({ id }) => {
             />
           </Grid>
 
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} md={2}>
             <Controller
               control={control}
               name="bookingNo"
@@ -299,7 +320,7 @@ const AddInvoice: React.FC<IAddInvoice> = ({ id }) => {
             />
           </Grid>
 
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} md={2}>
             <Controller
               control={control}
               name="invoiceDate"
@@ -316,6 +337,28 @@ const AddInvoice: React.FC<IAddInvoice> = ({ id }) => {
                 />
               )}
             />
+          </Grid>
+
+          <Grid item xs={12} md={1}>
+            <FormGroup>
+              <FormControlLabel
+                control={
+                  <Controller
+                    name="isUSDInvoice"
+                    control={control}
+                    defaultValue={false}
+                    render={({ field: { value, onChange } }) => (
+                      <Switch
+                      checked={value}
+                      onChange={(val) => onChange(val)}
+                      />
+                    )}
+                  />
+                }
+                label="USD Invoice"
+                labelPlacement="start"
+              />
+            </FormGroup>
           </Grid>
 
           <Grid item xs={6}>

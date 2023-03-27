@@ -12,7 +12,8 @@ import {
 
 import moment from "moment";
 
-import logo from "../../../Assets/Images/logo.png";
+// import logo from "../../../Assets/Images/logo.png";
+import logo from "../../../Assets/Images/Grace.png";
 
 //fonts
 import Roboto from "../../../Assets/fonts/Roboto/Roboto-Regular.ttf";
@@ -128,6 +129,7 @@ const styles = StyleSheet.create({
     borderWidth: "1px",
     borderColor: "black",
     borderTopWidth: 0,
+    height: "30px",
   },
   billheadsSection: {
     marginLeft: 20,
@@ -189,6 +191,11 @@ const styles = StyleSheet.create({
   textIndent: {
     padding: 2,
     paddingLeft: "20px",
+  },
+  bankDetails: {
+    paddingLeft: "10px",
+    display: "flex",
+    flexDirection: "row",
   },
   headingText: {
     marginTop: "3px",
@@ -257,7 +264,7 @@ const styles = StyleSheet.create({
     borderBottomStyle: "solid",
     borderBottomWidth: "1px",
     borderBottomColor: "black",
-    height: "300px",
+    height: "290px",
   },
   totalConatiner: {
     marginLeft: 20,
@@ -284,7 +291,7 @@ const PrintInvoice: React.FC<IPrintInvoice> = ({ invoice }) => {
       <Document>
         <Page size="A4" style={styles.page}>
           <View style={styles.header}>
-            <Text>TAX INVOICE</Text>
+            <Text>{invoice.heading}</Text>
           </View>
           <View style={styles.invoiceNoSection}>
             <Text>
@@ -348,6 +355,7 @@ const PrintInvoice: React.FC<IPrintInvoice> = ({ invoice }) => {
                 <div
                   style={{
                     padding: "10px",
+                    paddingBottom: "0px",
                     // borderRightWidth: 1,
                     // borderRightStyle: "solid",
                   }}
@@ -356,7 +364,7 @@ const PrintInvoice: React.FC<IPrintInvoice> = ({ invoice }) => {
                     <Text style={{ fontWeight: 600, width: "100px" }}>
                       Booking
                     </Text>
-                    <Text>: {invoice.bookingCount}</Text>
+                    <Text>: {invoice.bookingNo.bookingNo}</Text>
                   </View>
                   <View style={{ display: "flex", flexDirection: "row" }}>
                     <Text style={{ fontWeight: 600, width: "100px" }}>
@@ -371,18 +379,13 @@ const PrintInvoice: React.FC<IPrintInvoice> = ({ invoice }) => {
                         : ": "}
                     </Text>
                   </View>
+
                   <View style={{ display: "flex", flexDirection: "row" }}>
                     <Text style={{ fontWeight: 600, width: "100px" }}>
                       Ref #
                     </Text>
-                    <Text>: {invoice.bookingNo.bookingNo}</Text>
-                  </View>
-                  <View style={{ display: "flex", flexDirection: "row" }}>
-                    <Text style={{ fontWeight: 600, width: "100px" }}>
-                      Our Ref #
-                    </Text>
                     <Text>
-                      :
+                      :{" "}
                       {invoice.bookingNo.ourRefNo
                         ? invoice.bookingNo.ourRefNo
                         : ""}
@@ -420,23 +423,40 @@ const PrintInvoice: React.FC<IPrintInvoice> = ({ invoice }) => {
                       : {invoice.bookingNo.vessel} {invoice.bookingNo.voyage}
                     </Text>
                   </View>
-                  <View style={{ display: "flex", flexDirection: "row" }}>
-                    <Text style={{ fontWeight: 600, width: "100px" }}>
-                      ExRate
-                    </Text>
-                    <Text>
-                      :
-                      {invoice.bookingNo.exrate ? invoice.bookingNo.exrate : ""}
-                    </Text>
-                  </View>
+                  {!invoice.isUSDInvoice && (
+                    <View style={{ display: "flex", flexDirection: "row" }}>
+                      <Text style={{ fontWeight: 600, width: "100px" }}>
+                        ExRate
+                      </Text>
+                      <Text>
+                        :{" "}
+                        {invoice.bookingNo.exrate
+                          ? invoice.bookingNo.exrate
+                          : ""}
+                      </Text>
+                    </View>
+                  )}
+                  {invoice.isUSDInvoice && (
+                    <View style={{ display: "flex", flexDirection: "row" }}>
+                      <Text style={{ fontWeight: 600, width: "100px" }}>
+                        Billing Currency:
+                      </Text>
+                      <Text>: USD</Text>
+                    </View>
+                  )}
                 </div>
               </div>
               <div style={styles.imageContainer}>
-                <Image
-                  src={logo}
-                  style={{ height: "160px", width: "250px" }}
-                ></Image>
-
+                <div
+                  style={{
+                    height: "160px",
+                    display: "flex",
+                    alignContent: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Image src={logo} style={{ width: "250px" }}></Image>
+                </div>
                 <div style={{ textAlign: "center" }}>
                   <Text style={styles.companyName}>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GRACE
@@ -472,7 +492,7 @@ const PrintInvoice: React.FC<IPrintInvoice> = ({ invoice }) => {
           <View style={styles.containerSection}>
             <View style={{ display: "flex", flexDirection: "row" }}>
               <Text style={{ fontWeight: 600, width: "100px" }}>
-                Container #
+                Containers
               </Text>
               <Text>
                 : {invoice.containersForPrint ? invoice.containersForPrint : ""}
@@ -587,7 +607,7 @@ const PrintInvoice: React.FC<IPrintInvoice> = ({ invoice }) => {
               >
                 <Text>AMOUNT </Text>
               </View>
-              {invoice.totalSGST !== 0 && (
+              {!invoice.isUSDInvoice && invoice.totalSGST !== 0 && (
                 <View
                   style={{
                     border: 1,
@@ -642,7 +662,7 @@ const PrintInvoice: React.FC<IPrintInvoice> = ({ invoice }) => {
                 </View>
               )}
 
-              {invoice.totalCGST !== 0 && (
+              {!invoice.isUSDInvoice && invoice.totalCGST !== 0 && (
                 <View
                   style={{
                     border: 1,
@@ -699,7 +719,7 @@ const PrintInvoice: React.FC<IPrintInvoice> = ({ invoice }) => {
                 </View>
               )}
 
-              {invoice.totalIGST !== 0 && (
+              {!invoice.isUSDInvoice && invoice.totalIGST !== 0 && (
                 <View
                   style={{
                     border: 1,
@@ -771,7 +791,11 @@ const PrintInvoice: React.FC<IPrintInvoice> = ({ invoice }) => {
                   >
                     <View
                       style={{
-                        width: invoice.totalIGST !== 0 ? "26px" : "23px",
+                        width: invoice.isUSDInvoice
+                          ? "30px"
+                          : invoice.totalIGST !== 0
+                          ? "26px"
+                          : "23px",
                         border: 0,
                         textAlign: "right",
                         paddingRight: "5px",
@@ -783,7 +807,11 @@ const PrintInvoice: React.FC<IPrintInvoice> = ({ invoice }) => {
                     <View
                       style={{
                         border: 1,
-                        width: invoice.totalIGST !== 0 ? "173px" : "152px",
+                        width: invoice.isUSDInvoice
+                          ? "200px"
+                          : invoice.totalIGST !== 0
+                          ? "173px"
+                          : "152px",
                         textAlign: "left",
                         // height: "30px",
                         // paddingTop: "5px",
@@ -801,7 +829,11 @@ const PrintInvoice: React.FC<IPrintInvoice> = ({ invoice }) => {
                       style={{
                         border: 1,
                         borderStyle: "solid",
-                        width: invoice.totalIGST !== 0 ? "26px" : "23px",
+                        width: invoice.isUSDInvoice
+                          ? "30px"
+                          : invoice.totalIGST !== 0
+                          ? "26px"
+                          : "23px",
                         textAlign: "right",
                         // height: "30px",
                         // paddingTop: "5px",
@@ -818,7 +850,11 @@ const PrintInvoice: React.FC<IPrintInvoice> = ({ invoice }) => {
                       style={{
                         border: 1,
                         borderStyle: "solid",
-                        width: invoice.totalIGST !== 0 ? "65px" : "57px",
+                        width: invoice.isUSDInvoice
+                          ? "75px"
+                          : invoice.totalIGST !== 0
+                          ? "65px"
+                          : "57px",
                         textAlign: "center",
                         // height: "30px",
                         // paddingTop: "5px",
@@ -836,7 +872,11 @@ const PrintInvoice: React.FC<IPrintInvoice> = ({ invoice }) => {
                       style={{
                         border: 1,
                         borderStyle: "solid",
-                        width: invoice.totalIGST !== 0 ? "65px" : "57px",
+                        width: invoice.isUSDInvoice
+                          ? "75px"
+                          : invoice.totalIGST !== 0
+                          ? "65px"
+                          : "57px",
                         textAlign: "right",
                         // height: "30px",
                         // paddingTop: "5px",
@@ -854,7 +894,11 @@ const PrintInvoice: React.FC<IPrintInvoice> = ({ invoice }) => {
                       style={{
                         border: 1,
                         borderStyle: "solid",
-                        width: invoice.totalIGST !== 0 ? "25px" : "22px",
+                        width: invoice.isUSDInvoice
+                          ? "30px"
+                          : invoice.totalIGST !== 0
+                          ? "25px"
+                          : "22px",
                         textAlign: "center",
                         // height: "30px",
                         // paddingTop: "5px",
@@ -870,7 +914,11 @@ const PrintInvoice: React.FC<IPrintInvoice> = ({ invoice }) => {
                       style={{
                         border: 1,
                         borderStyle: "solid",
-                        width: invoice.totalIGST !== 0 ? "87px" : "77px",
+                        width: invoice.isUSDInvoice
+                          ? "110px"
+                          : invoice.totalIGST !== 0
+                          ? "87px"
+                          : "77px",
                         textAlign: "right",
                         // height: "30px",
                         // paddingTop: "5px",
@@ -1009,7 +1057,11 @@ const PrintInvoice: React.FC<IPrintInvoice> = ({ invoice }) => {
                   >
                     <View
                       style={{
-                        width: invoice.totalIGST !== 0 ? "26px" : "23px",
+                        width: invoice.isUSDInvoice
+                          ? "30px"
+                          : invoice.totalIGST !== 0
+                          ? "26px"
+                          : "23px",
                         border: 0,
                         textAlign: "right",
                         paddingRight: "5px",
@@ -1021,7 +1073,11 @@ const PrintInvoice: React.FC<IPrintInvoice> = ({ invoice }) => {
                     <View
                       style={{
                         border: 1,
-                        width: invoice.totalIGST !== 0 ? "173px" : "152px",
+                        width: invoice.isUSDInvoice
+                          ? "200px"
+                          : invoice.totalIGST !== 0
+                          ? "173px"
+                          : "152px",
                         textAlign: "left",
                         paddingRight: "5px",
                         paddingLeft: "5px",
@@ -1037,7 +1093,11 @@ const PrintInvoice: React.FC<IPrintInvoice> = ({ invoice }) => {
                       style={{
                         border: 1,
                         borderStyle: "solid",
-                        width: invoice.totalIGST !== 0 ? "26px" : "23px",
+                        width: invoice.isUSDInvoice
+                          ? "30px"
+                          : invoice.totalIGST !== 0
+                          ? "26px"
+                          : "23px",
                         textAlign: "right",
                         paddingRight: "5px",
                         fontSize: "10px",
@@ -1052,7 +1112,11 @@ const PrintInvoice: React.FC<IPrintInvoice> = ({ invoice }) => {
                       style={{
                         border: 1,
                         borderStyle: "solid",
-                        width: invoice.totalIGST !== 0 ? "65px" : "57px",
+                        width: invoice.isUSDInvoice
+                          ? "75px"
+                          : invoice.totalIGST !== 0
+                          ? "65px"
+                          : "57px",
                         textAlign: "center",
                         paddingRight: "5px",
                         borderTopWidth: 0,
@@ -1068,7 +1132,11 @@ const PrintInvoice: React.FC<IPrintInvoice> = ({ invoice }) => {
                       style={{
                         border: 1,
                         borderStyle: "solid",
-                        width: invoice.totalIGST !== 0 ? "65px" : "57px",
+                        width: invoice.isUSDInvoice
+                          ? "75px"
+                          : invoice.totalIGST !== 0
+                          ? "65px"
+                          : "57px",
                         textAlign: "right",
                         paddingRight: "5px",
                         borderTopWidth: 0,
@@ -1084,7 +1152,11 @@ const PrintInvoice: React.FC<IPrintInvoice> = ({ invoice }) => {
                       style={{
                         border: 1,
                         borderStyle: "solid",
-                        width: invoice.totalIGST !== 0 ? "25px" : "22px",
+                        width: invoice.isUSDInvoice
+                          ? "30px"
+                          : invoice.totalIGST !== 0
+                          ? "25px"
+                          : "22px",
                         textAlign: "center",
                         fontSize: "10px",
                         borderTopWidth: 0,
@@ -1109,37 +1181,42 @@ const PrintInvoice: React.FC<IPrintInvoice> = ({ invoice }) => {
                     >
                       <Text>&nbsp;&nbsp;</Text>
                     </View>
-                    <View
-                      style={{
-                        border: 1,
-                        borderStyle: "solid",
-                        textAlign: "right",
-                        width: invoice.totalIGST !== 0 ? "17px" : "16px",
-                        fontSize: "10px",
-                        borderTopWidth: 0,
-                        borderRightWidth: 0,
-                        borderBottomWidth: 0,
-                      }}
-                    >
-                      <Text>&nbsp;&nbsp;</Text>
-                    </View>
-                    <View
-                      style={{
-                        border: 1,
-                        borderStyle: "solid",
-                        textAlign: "right",
-                        paddingRight: "5px",
-                        borderTopWidth: 0,
-                        borderRightWidth: 0,
-                        borderBottomWidth: 0,
+                    {!invoice.isUSDInvoice && (
+                      <>
+                        <View
+                          style={{
+                            border: 1,
+                            borderStyle: "solid",
+                            textAlign: "right",
+                            width: invoice.totalIGST !== 0 ? "17px" : "16px",
+                            fontSize: "10px",
+                            borderTopWidth: 0,
+                            borderRightWidth: 0,
+                            borderBottomWidth: 0,
+                          }}
+                        >
+                          <Text>&nbsp;&nbsp;</Text>
+                        </View>
+                        <View
+                          style={{
+                            border: 1,
+                            borderStyle: "solid",
+                            textAlign: "right",
+                            paddingRight: "5px",
+                            borderTopWidth: 0,
+                            borderRightWidth: 0,
+                            borderBottomWidth: 0,
 
-                        fontSize: "10px",
-                        width: "60px",
-                      }}
-                    >
-                      <Text>&nbsp;&nbsp;</Text>
-                    </View>
-                    {invoice.totalIGST === 0 && (
+                            fontSize: "10px",
+                            width: "60px",
+                          }}
+                        >
+                          <Text>&nbsp;&nbsp;</Text>
+                        </View>
+                      </>
+                    )}
+
+                    {!invoice.isUSDInvoice && invoice.totalIGST === 0 && (
                       <>
                         {" "}
                         <View
@@ -1179,83 +1256,132 @@ const PrintInvoice: React.FC<IPrintInvoice> = ({ invoice }) => {
               ))}
           </View>
           <View style={styles.totalConatiner}>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-              }}
-            >
+            {!invoice.isUSDInvoice && (
               <div
                 style={{
-                  width: invoice.totalIGST !== 0 ? "200px" : "175px",
-                  borderRight: 1,
-                  borderBottom: 1,
-                  padding: "5px",
-                  textAlign: "center",
-                  fontWeight: 600,
+                  display: "flex",
+                  flexDirection: "row",
                 }}
               >
-                <Text>TOTAL </Text>
-              </div>
+                <div
+                  style={{
+                    width: invoice.totalIGST !== 0 ? "200px" : "175px",
+                    borderRight: 1,
+                    borderBottom: 1,
+                    padding: "5px",
+                    textAlign: "center",
+                    fontWeight: 600,
+                  }}
+                >
+                  <Text>TOTAL </Text>
+                </div>
 
-              <div
-                style={{
-                  width: invoice.totalIGST !== 0 ? "268px" : "231px",
-                  borderRight: 1,
-                  borderBottom: 1,
-                  padding: "5px",
-                  textAlign: "right",
-                  fontWeight: 600,
-                }}
-              >
-                <Text>{+invoice.totalAmount.toFixed(2)}</Text>
-              </div>
+                <div
+                  style={{
+                    width: invoice.totalIGST !== 0 ? "268px" : "231px",
+                    borderRight: 1,
+                    borderBottom: 1,
+                    padding: "5px",
+                    textAlign: "right",
+                    fontWeight: 600,
+                  }}
+                >
+                  <Text>{+invoice.totalAmount.toFixed(2)}</Text>
+                </div>
 
-              <div
-                style={{
-                  width: "16px",
-                  borderRight: 1,
-                  borderBottom: 1,
-                  padding: "5px",
-                  textAlign: "right",
-                  fontWeight: 600,
-                }}
-              >
-                <Text>&nbsp;&nbsp;</Text>
-              </div>
+                <div
+                  style={{
+                    width: "16px",
+                    borderRight: 1,
+                    borderBottom: 1,
+                    padding: "5px",
+                    textAlign: "right",
+                    fontWeight: 600,
+                  }}
+                >
+                  <Text>&nbsp;&nbsp;</Text>
+                </div>
 
-              {invoice.totalSGST !== 0 && (
-                <>
+                {invoice.totalSGST !== 0 && (
+                  <>
+                    <div
+                      style={{
+                        width: "57px",
+                        borderRight: 1,
+                        borderBottom: 1,
+                        padding: "5px",
+                        textAlign: "right",
+                        fontWeight: 600,
+                      }}
+                    >
+                      <Text>{+invoice.totalSGST.toFixed(2)}</Text>
+                    </div>
+                    <div
+                      style={{
+                        width: "16px",
+                        borderRight: 1,
+                        borderBottom: 1,
+                        padding: "5px",
+                        textAlign: "right",
+                        fontWeight: 600,
+                      }}
+                    >
+                      <Text></Text>
+                    </div>
+                  </>
+                )}
+                {invoice.totalCGST !== 0 && (
                   <div
                     style={{
                       width: "57px",
-                      borderRight: 1,
+                      borderRight: 0,
                       borderBottom: 1,
                       padding: "5px",
                       textAlign: "right",
                       fontWeight: 600,
                     }}
                   >
-                    <Text>{+invoice.totalSGST.toFixed(2)}</Text>
+                    <Text>{+invoice.totalCGST.toFixed(2)}</Text>
                   </div>
+                )}
+                {invoice.totalIGST !== 0 && (
                   <div
                     style={{
-                      width: "16px",
-                      borderRight: 1,
+                      width: "70px",
+                      borderRight: 0,
                       borderBottom: 1,
                       padding: "5px",
                       textAlign: "right",
                       fontWeight: 600,
                     }}
                   >
-                    <Text></Text>
+                    <Text>{+invoice.totalIGST.toFixed(2)}</Text>
                   </div>
-                </>
-              )}
-              {invoice.totalCGST !== 0 && (
+                )}
+              </div>
+            )}
+            {invoice.isUSDInvoice && (
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                }}
+              >
                 <div
                   style={{
-                    width: "57px",
+                    width: invoice.totalIGST !== 0 ? "200px" : "175px",
+                    borderRight: 0,
+                    borderBottom: 1,
+                    padding: "5px",
+                    textAlign: "center",
+                    fontWeight: 600,
+                  }}
+                >
+                  <Text> &nbsp;&nbsp;</Text>
+                </div>
+                <div
+                  style={{
+                    width: invoice.totalIGST !== 0 ? "354px" : "380px",
                     borderRight: 0,
                     borderBottom: 1,
                     padding: "5px",
@@ -1263,24 +1389,10 @@ const PrintInvoice: React.FC<IPrintInvoice> = ({ invoice }) => {
                     fontWeight: 600,
                   }}
                 >
-                  <Text>{+invoice.totalCGST.toFixed(2)}</Text>
+                  <Text>&nbsp;&nbsp;</Text>
                 </div>
-              )}
-              {invoice.totalIGST !== 0 && (
-                <div
-                  style={{
-                    width: "70px",
-                    borderRight: 0,
-                    borderBottom: 1,
-                    padding: "5px",
-                    textAlign: "right",
-                    fontWeight: 600,
-                  }}
-                >
-                  <Text>{+invoice.totalIGST.toFixed(2)}</Text>
-                </div>
-              )}
-            </div>
+              </div>
+            )}
             <div
               style={{
                 display: "flex",
@@ -1310,6 +1422,7 @@ const PrintInvoice: React.FC<IPrintInvoice> = ({ invoice }) => {
                 }}
               >
                 <Text>
+                  {invoice.isUSDInvoice ? "USD : " : ""}
                   {
                     +(
                       +invoice.totalAmount +
@@ -1379,20 +1492,32 @@ const PrintInvoice: React.FC<IPrintInvoice> = ({ invoice }) => {
                   padding: "5px",
                 }}
               >
-                <Text>BANK DETAILS: </Text>
-                <Text style={styles.textIndent}>
-                  A/C #: {/* invoice.accountDetails.bankName */}
-                </Text>
-                <Text style={styles.textIndent}>
-                  IFSC: {/* {invoice.accountDetails.bankBranch} */}
-                </Text>
-                <Text style={styles.textIndent}>
-                  BRANCH: {/* IFSC Code: {invoice.accountDetails.ifscCode} */}
-                </Text>
-                <Text style={styles.textIndent}>
-                  SWIFT CODE:
-                  {/* In favour of: {invoice.accountDetails.accountName} */}
-                </Text>
+                <Text style={{ fontWeight: "bold" }}>BANK DETAILS: </Text>
+
+                <View style={styles.bankDetails}>
+                  <Text style={{ width: "50px" }}>Bank</Text>
+                  <Text>: HDFC Bank</Text>
+                </View>
+                <View style={styles.bankDetails}>
+                  <Text style={{ width: "50px" }}>Branch</Text>
+                  <Text>: Tuticorin Branch</Text>
+                </View>
+                <View style={styles.bankDetails}>
+                  <Text style={{ width: "50px" }}>A/C #</Text>
+                  <Text>: 50200077550144</Text>
+                </View>
+                <View style={styles.bankDetails}>
+                  <Text style={{ width: "50px" }}>IFSC</Text>
+                  <Text>: HDFC0001104</Text>
+                </View>
+                <View style={styles.bankDetails}>
+                  <Text style={{ width: "50px" }}>SWIFT</Text>
+                  <Text>: HDFCINBBCHE</Text>
+                </View>
+                <View style={styles.bankDetails}>
+                  <Text style={{ width: "50px" }}>MICR</Text>
+                  <Text>: 628240002</Text>
+                </View>
               </div>
               <div
                 style={{

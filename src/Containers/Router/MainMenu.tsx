@@ -1,18 +1,11 @@
 import {
-  AccountBalance,
-  AttachMoney,
   DashboardOutlined,
-  EventAvailable,
-  Gavel,
-  LocalOffer,
   LocationCity,
   People,
   Percent,
   PriceChange,
-  Star,
   WebAsset,
   Handshake,
-  Inventory,
   Note,
 } from "@mui/icons-material";
 import CustomIcon from "../../Components/CustomIcon";

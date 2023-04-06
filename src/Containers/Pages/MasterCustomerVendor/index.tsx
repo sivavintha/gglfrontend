@@ -5,8 +5,6 @@ import {
   Close,
   Delete,
   Edit,
-  Mail,
-  NoAccounts,
   Visibility,
 } from "@mui/icons-material";
 import { GridActionsCellItem } from "@mui/x-data-grid";

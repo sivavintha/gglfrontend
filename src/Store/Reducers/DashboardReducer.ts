@@ -1,6 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { IDashboardState } from "../../Interfaces";
-import { TBooking } from "../../Types";
 
 const initialState: IDashboardState = {
   dashboard: {

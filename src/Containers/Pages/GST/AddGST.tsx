@@ -224,7 +224,7 @@ const AddGST: React.FC<IAddGST> = ({ id }) => {
           <Grid item xs={12} sm={2}>
             <DesktopDatePicker
               label="Valid From"
-              inputFormat="MM/DD/YYYY"
+              inputFormat="DD/MM/YYYY"
               value={effectiveFrom}
               onChange={handleEffectiveFromChange}
               renderInput={(params) => <TextField {...params} />}
@@ -234,7 +234,7 @@ const AddGST: React.FC<IAddGST> = ({ id }) => {
           <Grid item xs={12} sm={2}>
             <DesktopDatePicker
               label="Valid To"
-              inputFormat="MM/DD/YYYY"
+              inputFormat="DD/MM/YYYY"
               value={effectiveTo}
               onChange={handleEffectiveToChange}
               renderInput={(params) => <TextField {...params} />}

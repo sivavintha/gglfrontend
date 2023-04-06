@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Button,
   CssBaseline,
@@ -33,7 +33,6 @@ import PreviewInvoice from "./PreviewInvoice";
 import moment from "moment";
 import { useSnackbar } from "notistack";
 
-
 interface IAddInvoice {
   id?: string;
 }
@@ -58,7 +57,6 @@ const AddInvoice: React.FC<IAddInvoice> = ({ id }) => {
   const [openDialog, setOpenDialog] = React.useState(false);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
-
   const vendorData = useAppSelector((state) => state.customerVendor.vendors);
   const bookingData = useAppSelector((state) => state.booking.bookings);
   const lastSavedRecord = useAppSelector(
@@ -69,7 +67,7 @@ const AddInvoice: React.FC<IAddInvoice> = ({ id }) => {
 
   const DEFAULT_FORM_VALUES = {
     invoiceCategory: "CUSTOMER",
-    invoiceDate: moment()
+    invoiceDate: moment(),
   };
 
   const {
@@ -172,20 +170,25 @@ const AddInvoice: React.FC<IAddInvoice> = ({ id }) => {
     console.log("data ===>", data);
     const invoice = { ...data };
 
-    if(data.invoiceCategory === "CUSTOMER" && data.bookingNo.sellRate.length === 0){
+    if (
+      data.invoiceCategory === "CUSTOMER" &&
+      data.bookingNo.sellRate.length === 0
+    ) {
       enqueueSnackbar("Unable to save! Please enter the sellrate first.", {
         variant: "error",
       });
       return;
     }
 
-    if(data.invoiceCategory === "VENDOR" && data.bookingNo.buyRate.length === 0){
+    if (
+      data.invoiceCategory === "VENDOR" &&
+      data.bookingNo.buyRate.length === 0
+    ) {
       enqueueSnackbar("Unable to save! Please enter the buyrate first.", {
         variant: "error",
       });
       return;
     }
-
 
     invoice.fyear = currentFyear?._id;
     invoice.pc_code = currentProfitCenter?._id;
@@ -333,7 +336,9 @@ const AddInvoice: React.FC<IAddInvoice> = ({ id }) => {
                   onChange={(newValue) => {
                     field.onChange(newValue);
                   }}
-                  renderInput={(params) => <TextField {...params} />}
+                  renderInput={(params) => (
+                    <TextField {...params} size="small" />
+                  )}
                 />
               )}
             />
@@ -349,8 +354,8 @@ const AddInvoice: React.FC<IAddInvoice> = ({ id }) => {
                     defaultValue={false}
                     render={({ field: { value, onChange } }) => (
                       <Switch
-                      checked={value}
-                      onChange={(val) => onChange(val)}
+                        checked={value}
+                        onChange={(val) => onChange(val)}
                       />
                     )}
                   />

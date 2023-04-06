@@ -45,15 +45,16 @@ const AddBooking = React.lazy(() => import("../Pages/Booking/AddBooking"));
 const AddContainer = React.lazy(() => import("../Pages/Booking/AddContainer"));
 const AddSellRate = React.lazy(() => import("../Pages/Booking/AddSellRate"));
 const AddBuyRate = React.lazy(() => import("../Pages/Booking/AddBuyRate"));
+const AddVesselSchedule = React.lazy(
+  () => import("../Pages/Booking/AddVesselSchedule")
+);
+const AddEvents = React.lazy(() => import("../Pages/Booking/AddEvent"));
 
 const BookingList = React.lazy(() => import("../Pages/Booking/index"));
 const InvoiceList = React.lazy(() => import("../Pages/Invoice/index"));
 const CreateInvoice = React.lazy(
   () => import("../Pages/Invoice/CreateInvoice")
 );
-
-const AddContract = React.lazy(() => import("../Pages/Contracts/AddContract"));
-const ContractsList = React.lazy(() => import("../Pages/Contracts/index"));
 
 const AddGST = React.lazy(() => import("../Pages/GST/AddGST"));
 const GSTList = React.lazy(() => import("../Pages/GST/index"));
@@ -174,6 +175,24 @@ const MainRouter = () => (
       />
 
       <Route
+        path="/addvesselschedule"
+        element={
+          <Layout>
+            <AddVesselSchedule />
+          </Layout>
+        }
+      />
+
+      <Route
+        path="/addevents"
+        element={
+          <Layout>
+            <AddEvents />
+          </Layout>
+        }
+      />
+
+      <Route
         path="/master/commodity"
         element={
           <Layout>
@@ -205,23 +224,6 @@ const MainRouter = () => (
         element={
           <Layout>
             <CreateInvoice />
-          </Layout>
-        }
-      />
-      
-      <Route
-        path="/contract"
-        element={
-          <Layout>
-            <ContractsList />
-          </Layout>
-        }
-      />
-      <Route
-        path="/contract/addcontract"
-        element={
-          <Layout>
-            <AddContract />
           </Layout>
         }
       />

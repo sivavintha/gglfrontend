@@ -54,6 +54,7 @@ const AddContainer = () => {
   const bookingId: any = newState?.id;
   const navigate = useNavigate();
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const [editCntValues, setEditCntValues] = React.useState<any>();
 
   const bookingData = useAppSelector((state) => state.booking.bookings);
   const currentBooking = useAppSelector(
@@ -137,10 +138,7 @@ const AddContainer = () => {
     containers: [
       {
         containerNo: "",
-        containerType: {
-          type: "20 GP",
-          abbr: "20",
-        },
+        containerType: containerDataType[0],
         sealNo: "",
         noOfPackages: 0,
         grossWt: 0,
@@ -188,12 +186,36 @@ const AddContainer = () => {
   }, [bookingId, dispatch]);
 
   React.useEffect(() => {
-    if (currentBooking) {
-      console.log("currentBooking ===>", currentBooking);
-      setValue("bookingNo", currentBooking);
-      setValue("containers", currentBooking.containers);
+    if (currentBooking && containerDataType) {
+      const containers: any[] = [];
+      currentBooking.containers.map((cnt) => {
+        const newObj = { ...cnt };
+
+        const cntType = containerDataType.filter((typ) => {
+          return typ._id === cnt.containerType;
+        });
+        newObj.containerType = cntType[0];
+        containers.push(newObj);
+
+        return cnt;
+      });
+      if (containers.length > 0) {
+        const newObj = {
+          bookingNo: { ...currentBooking },
+          containers: containers,
+        };
+        setEditCntValues(newObj);
+      }
     }
-  }, [currentBooking]);
+  }, [currentBooking, containerDataType]);
+
+  React.useEffect(() => {
+    if (editCntValues) {
+      console.log("editCntValues ==.", editCntValues);
+      setValue("bookingNo", editCntValues.bookingNo);
+      setValue("containers", editCntValues.containers);
+    }
+  }, [editCntValues]);
 
   const onSubmit = (data: FormValues, event: any) => {
     event.preventDefault();
@@ -205,6 +227,9 @@ const AddContainer = () => {
       return;
     }
     console.log("data ===>", data);
+    data.containers.map((cnt) => {
+      cnt.containerType = cnt.containerType._id;
+    });
     const booking: any = {
       _id: data.bookingNo._id,
       containers: data.containers,
@@ -276,10 +301,7 @@ const AddContainer = () => {
                 onClick={() =>
                   append({
                     containerNo: "",
-                    containerType: {
-                      type: "20 GP",
-                      abbr: "20",
-                    },
+                    containerType: containerDataType[0],
                     sealNo: "",
                     noOfPackages: 0,
                     grossWt: 0,
@@ -316,29 +338,37 @@ const AddContainer = () => {
                   />
                 </Grid>
                 <Grid item xs={12} md={1.5}>
-                  <Autocomplete
-                    id="containerType"
-                    {...register(`containers.${index}.containerType`, {
-                      required: true,
-                    })}
-                    options={containerDataType}
-                    getOptionLabel={(option) =>
-                      option.type ? option.type : ""
-                    }
-                    isOptionEqualToValue={(option, value) =>
-                      option.type === value.type
-                    }
-                    renderInput={(params: any) => (
-                      <TextField
-                        {...params}
-                        label="Container Type"
-                        error={!!errors.containers?.[index]?.containerType}
-                        helperText={
-                          errors.containers?.[index]?.containerType?.message &&
-                          "Container Type is required"
+                  <Controller
+                    control={control}
+                    name={`containers.${index}.containerType`}
+                    rules={{ required: true }}
+                    defaultValue={item.containerType}
+                    render={({ field: { onChange, value } }) => (
+                      <Autocomplete
+                        id="containerType"
+                        onChange={(event, value) => {
+                          onChange(value);
+                        }}
+                        value={value}
+                        options={containerDataType}
+                        getOptionLabel={(option) =>
+                          option.type ? option.type : ""
                         }
-                        size="small"
-                        name={`containers.${index}.containerType`}
+                        isOptionEqualToValue={(option, value) =>
+                          option.type === value.type
+                        }
+                        renderInput={(params: any) => (
+                          <TextField
+                            {...params}
+                            label="Container Type"
+                            error={!!errors.containers?.[index]?.containerType}
+                            helperText={
+                              errors.containers?.[index]?.containerType
+                                ?.message && "Container Type is required"
+                            }
+                            size="small"
+                          />
+                        )}
                       />
                     )}
                   />

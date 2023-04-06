@@ -2,8 +2,6 @@ import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./Reducers/AuthReducer";
 import bookingReducer from "./Reducers/BookingReducer";
 import customerVendorReducer from "./Reducers/CustomerVendorReducer";
-import eventReducer from "./Reducers/EventReducer";
-import contractReducer from "./Reducers/ContractReducer";
 import dashboardReducer from "./Reducers/DashboardReducer";
 import gstReducer from "./Reducers/GSTReducer";
 import originReducer from "./Reducers/OriginReducer";
@@ -18,6 +16,7 @@ import invoiceReducer from "./Reducers/InvoiceReducer";
 import containerTypeReducer from "./Reducers/ContainerTypeReducer";
 import basisTypeReducer from "./Reducers/BasisTypeReducer";
 import currencyReducer from "./Reducers/CurrencyReducer";
+import movementTypeReducer from "./Reducers/MovementTypeReducer";
 
 const store = configureStore({
   reducer: {
@@ -26,9 +25,7 @@ const store = configureStore({
     spinner: spinnerReducer.reducer,
     customerVendor: customerVendorReducer.reducer,
     billHead: billHeadReducer.reducer,
-    event: eventReducer.reducer,
     booking: bookingReducer.reducer,
-    contract: contractReducer.reducer,
     dashboard: dashboardReducer.reducer,
     origin: originReducer.reducer,
     gst: gstReducer.reducer,
@@ -40,6 +37,7 @@ const store = configureStore({
     currency: currencyReducer.reducer,
     containerType: containerTypeReducer.reducer,
     basisType: basisTypeReducer.reducer,
+    movementType: movementTypeReducer.reducer,
   },
 });
 

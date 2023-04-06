@@ -19,22 +19,16 @@ import {
 } from "../../../Store/Actions/BookingActions";
 import { bookingActions } from "../../../Store/Reducers/BookingReducer";
 
-import {
-  Cancel,
-  Save,
-  Add,
-  Remove,
-  Calculate,
-  Sell,
-} from "@mui/icons-material";
+import { Cancel, Save, Add, Remove } from "@mui/icons-material";
 import { useLocation, useNavigate } from "react-router";
 import { useSnackbar } from "notistack";
 import { getCustomerVendors } from "../../../Store/Actions/CustomerVendorActions";
 import { getBillHeads } from "../../../Store/Actions/BillHeadActions";
+import { getBasisType } from "../../../Store/Actions/BasisTypeActions";
+import { getCurrency } from "../../../Store/Actions/CurrencyAction";
 
 type FormValues = {
   bookingNo: any;
-
   sellRate: {
     narration: any;
     description: string;
@@ -71,61 +65,8 @@ const AddSellRate = () => {
   );
 
   const currentStatus = useAppSelector((state) => state.booking.status);
-
-  const basisType = [
-    {
-      name: "Document",
-      abbr: "DOC",
-    },
-    {
-      name: "Per 20",
-      abbr: "P20",
-    },
-    {
-      name: "Per 40",
-      abbr: "P40",
-    },
-    {
-      name: "CBM",
-      abbr: "cbm",
-    },
-  ];
-
-  const currencyType = [
-    {
-      name: "INR",
-      abbr: "INR",
-    },
-    {
-      name: "USD",
-      abbr: "USD",
-    },
-    {
-      name: "GBP",
-      abbr: "GBP",
-    },
-    {
-      name: "EUR",
-      abbr: "EUR",
-    },
-    {
-      name: "AUD",
-      abbr: "AUD",
-    },
-    {
-      name: "YEN",
-      abbr: "YEN",
-    },
-    {
-      name: "CAD",
-      abbr: "CAD",
-    },
-    {
-      name: "ZAR",
-      abbr: "ZAR",
-    },
-  ];
-
+  const basisType = useAppSelector((state) => state.basisType.basisTypes);
+  const currencyType = useAppSelector((state) => state.currency.currency);
   const DEFAULT_FORM_VALUES = {
     bookingNo: null,
     sellRate: [
@@ -134,9 +75,9 @@ const AddSellRate = () => {
         description: "",
         billingTo: "",
         isSupplementary: false,
-        basis: { name: "Document", abbr: "DOC" },
+        basis: basisType[0],
         qty: 0,
-        currency: { name: "INR", abbr: "INR" },
+        currency: currencyType[0],
         unitRate: 0,
         exrate: 0,
         amount: 0,
@@ -156,7 +97,7 @@ const AddSellRate = () => {
     defaultValues: DEFAULT_FORM_VALUES,
   });
 
-  const { fields, append, remove } = useFieldArray<FormValues>({
+  const { fields, append, remove } = useFieldArray({
     control,
     name: "sellRate",
   });
@@ -168,6 +109,8 @@ const AddSellRate = () => {
     dispatch(getBookings(true));
     dispatch(getCustomerVendors("CUSTOMER", true));
     dispatch(getBillHeads(true));
+    dispatch(getBasisType(true));
+    dispatch(getCurrency(true));
   }, [dispatch]);
 
   React.useEffect(() => {
@@ -185,35 +128,37 @@ const AddSellRate = () => {
   }, [bookingId, dispatch]);
 
   React.useEffect(() => {
-    if (currentBooking) {
-      console.log("currentBooking ===>", currentBooking);
-      setCurrentBookingReceived(currentBooking);
+    if (currentBooking && basisType && currencyType) {
+      const sellRate: any[] = [];
+      currentBooking.sellRate.map((rate) => {
+        const newObj = { ...rate };
+
+        const basis = basisType.filter((typ) => {
+          return typ._id === rate.basis;
+        });
+        newObj.basis = basis[0];
+
+        const currency = currencyType.filter((typ) => {
+          return typ._id === rate.currency;
+        });
+        newObj.currency = currency[0];
+        sellRate.push(newObj);
+
+        return rate;
+      });
+      if (sellRate.length > 0) {
+        const newObj = {
+          bookingNo: { ...currentBooking },
+          sellRate: sellRate,
+        };
+        setCurrentBookingReceived(newObj);
+      }
     }
-  }, [currentBooking]);
+  }, [currentBooking, basisType, currencyType]);
 
   React.useEffect(() => {
     if (currentBookingReceived) {
-      console.log("basisType ===>", basisType);
-      setValue("bookingNo", currentBookingReceived);
-      currentBookingReceived.sellRate.map((sell: any) => {
-        const record = { ...sell };
-        console.log(
-          "basis ===>",
-          basisType.filter((basis) => basis.name === sell.basis)[0]
-        );
-        console.log(
-          "currency ===>",
-          currencyType.filter((currency) => currency.name === sell.currency)[0]
-        );
-
-        record.basis = basisType.filter(
-          (basis) => basis.name === sell.basis
-        )[0];
-        record.currency = currencyType.filter(
-          (currency) => currency.name === sell.currency
-        )[0];
-        return record;
-      });
+      setValue("bookingNo", currentBookingReceived.bookingNo);
       setValue("sellRate", currentBookingReceived.sellRate);
     }
   }, [currentBookingReceived]);
@@ -227,7 +172,8 @@ const AddSellRate = () => {
       });
       return;
     }
-    console.log("data ===>", data);
+    const bkSellRate: any[] = [];
+    // console.log("data ===>", data);
     data.sellRate.map((sell) => {
       sell.billingTo = customerData.filter((customer) => {
         const value = sell.billingTo._id ? sell.billingTo.name : sell.billingTo;
@@ -240,13 +186,16 @@ const AddSellRate = () => {
 
         return billhead.billHeadName === value;
       })[0]._id;
+      sell.basis = sell.basis._id;
+      sell.currency = sell.currency._id;
+      bkSellRate.push(sell);
       return sell;
     });
+
     const booking: any = {
       _id: data.bookingNo._id,
-      sellRate: data.sellRate,
+      sellRate: bkSellRate,
     };
-    console.log("booking ===>", booking);
 
     if (bookingId) {
       booking._id = bookingId;
@@ -320,9 +269,9 @@ const AddSellRate = () => {
                     description: "",
                     billingTo: "",
                     isSupplementary: false,
-                    basis: "",
+                    basis: basisType[0],
                     qty: 0,
-                    currency: "",
+                    currency: currencyType[0],
                     unitRate: 0,
                     exrate: 0,
                     amount: 0,
@@ -408,30 +357,37 @@ const AddSellRate = () => {
                   />
                 </Grid>
                 <Grid item xs={12} md={1.25}>
-                  <Autocomplete
-                    id="basis"
-                    {...register(`sellRate.${index}.basis`, {
-                      required: true,
-                    })}
-                    options={basisType}
-                    getOptionLabel={(option) =>
-                      option.name ? option.name : ""
-                    }
-                    isOptionEqualToValue={(option, value) =>
-                      option.name === value.name
-                    }
-                    defaultValue={getValues(`sellRate.${index}.basis`)}
-                    renderInput={(params: any) => (
-                      <TextField
-                        {...params}
-                        label="Basis"
-                        error={!!errors.sellRate?.[index]?.basis}
-                        helperText={
-                          errors.sellRate?.[index]?.basis?.message &&
-                          "Basis is required"
+                  <Controller
+                    control={control}
+                    name={`sellRate.${index}.basis`}
+                    rules={{ required: true }}
+                    defaultValue={item.basis}
+                    render={({ field: { onChange, value } }) => (
+                      <Autocomplete
+                        id="basis"
+                        onChange={(event, value) => {
+                          onChange(value);
+                        }}
+                        value={value}
+                        options={basisType}
+                        getOptionLabel={(option) =>
+                          option.name ? option.name : ""
                         }
-                        size="small"
-                        name={`sellRate.${index}.basis`}
+                        isOptionEqualToValue={(option, value) =>
+                          option.name === value.name
+                        }
+                        renderInput={(params: any) => (
+                          <TextField
+                            {...params}
+                            label="Basis"
+                            error={!!errors.sellRate?.[index]?.basis}
+                            helperText={
+                              errors.sellRate?.[index]?.basis?.message &&
+                              "Basis is required"
+                            }
+                            size="small"
+                          />
+                        )}
                       />
                     )}
                   />
@@ -462,13 +418,13 @@ const AddSellRate = () => {
                             `sellRate.${index}.unitRate`
                           );
 
-                          console.log(
-                            "qty , exrae, unitprice, amount ===>",
-                            qty,
-                            exrate,
-                            unitprice,
-                            qty * exrate * unitprice
-                          );
+                          // console.log(
+                          //   "qty , exrae, unitprice, amount ===>",
+                          //   qty,
+                          //   exrate,
+                          //   unitprice,
+                          //   qty * exrate * unitprice
+                          // );
 
                           const amount = qty * exrate * unitprice;
                           setValue(`sellRate.${index}.amount`, amount);
@@ -478,30 +434,37 @@ const AddSellRate = () => {
                   />
                 </Grid>
                 <Grid item xs={12} md={0.75}>
-                  <Autocomplete
-                    id="currency"
-                    {...register(`sellRate.${index}.currency`, {
-                      required: true,
-                    })}
-                    options={currencyType}
-                    getOptionLabel={(option) =>
-                      option.name ? option.name : ""
-                    }
-                    isOptionEqualToValue={(option, value) =>
-                      option.name === value.name
-                    }
-                    defaultValue={getValues(`sellRate.${index}.currency`)}
-                    renderInput={(params: any) => (
-                      <TextField
-                        {...params}
-                        label="CUR"
-                        error={!!errors.sellRate?.[index]?.currency}
-                        helperText={
-                          errors.sellRate?.[index]?.currency?.message &&
-                          "Currency is required"
+                  <Controller
+                    control={control}
+                    name={`sellRate.${index}.currency`}
+                    rules={{ required: true }}
+                    defaultValue={item.currency}
+                    render={({ field: { onChange, value } }) => (
+                      <Autocomplete
+                        id="currency"
+                        onChange={(event, value) => {
+                          onChange(value);
+                        }}
+                        value={value}
+                        options={currencyType}
+                        getOptionLabel={(option) =>
+                          option.name ? option.name : ""
                         }
-                        size="small"
-                        name={`sellRate.${index}.currency`}
+                        isOptionEqualToValue={(option, value) =>
+                          option.name === value.name
+                        }
+                        renderInput={(params: any) => (
+                          <TextField
+                            {...params}
+                            label="CUR"
+                            error={!!errors.sellRate?.[index]?.currency}
+                            helperText={
+                              errors.sellRate?.[index]?.currency?.message &&
+                              "Currency is required"
+                            }
+                            size="small"
+                          />
+                        )}
                       />
                     )}
                   />
@@ -527,13 +490,13 @@ const AddSellRate = () => {
                           const qty = getValues(`sellRate.${index}.qty`);
 
                           const unitprice = parseFloat(event.target.value);
-                          console.log(
-                            "qty , exrae, unitprice, amount ===>",
-                            qty,
-                            exrate,
-                            unitprice,
-                            qty * exrate * unitprice
-                          );
+                          // console.log(
+                          //   "qty , exrae, unitprice, amount ===>",
+                          //   qty,
+                          //   exrate,
+                          //   unitprice,
+                          //   qty * exrate * unitprice
+                          // );
                           const amount = qty * exrate * unitprice;
                           setValue(`sellRate.${index}.amount`, amount);
                         }}
@@ -565,13 +528,13 @@ const AddSellRate = () => {
                             `sellRate.${index}.unitRate`
                           );
 
-                          console.log(
-                            "qty , exrae, unitprice, amount ===>",
-                            qty,
-                            exrate,
-                            unitprice,
-                            qty * exrate * unitprice
-                          );
+                          // console.log(
+                          //   "qty , exrae, unitprice, amount ===>",
+                          //   qty,
+                          //   exrate,
+                          //   unitprice,
+                          //   qty * exrate * unitprice
+                          // );
 
                           const amount = qty * exrate * unitprice;
                           setValue(`sellRate.${index}.amount`, amount);

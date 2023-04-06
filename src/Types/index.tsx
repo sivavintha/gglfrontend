@@ -69,6 +69,12 @@ export type TContainerType = {
   abbr: string;
 };
 
+export type TMovementType = {
+  _id?: string;
+  type: string;
+  abbr: string;
+};
+
 export type TBasisType = {
   _id?: string;
   name: string;
@@ -80,7 +86,6 @@ export type TCurrency = {
   name: string;
   abbr: string;
 };
-
 
 export type TFyear = {
   _id?: string;
@@ -192,7 +197,7 @@ export type TBooking = {
 
   containers: {
     containerNo: string;
-    containerType: string;
+    containerType: any;
     sealNo: string;
     noOfPackages: number;
     grossWt: number;
@@ -202,11 +207,11 @@ export type TBooking = {
 
   vesselSchedule: {
     legNo: string;
-    vesselType: string;
+    vesselType: any;
     vesselName: string;
     voyage: string;
-    portFrom: string;
-    portTo: string;
+    portFrom: any;
+    portTo: any;
 
     ETD: Date;
     ETA: Date;
@@ -241,6 +246,53 @@ export type TBooking = {
     amount: any;
     isFinalled?: boolean;
   }[];
+
+  events: {
+    productionPlannedDt: any;
+    productionActualDt: any;
+    containerBookingPlannedDt: any;
+    containerBookingActualDt: any;
+    doReleasePlannedDt: any;
+    doReleaseActualDt: any;
+    containerCollectionPlannedDt: any;
+    containerCollectionActualDt: any;
+    containerStuffingPlannedDt: any;
+    containerStuffingActualDt: any;
+    containerDispatchPlannedDt: any;
+    containerDispatchActualDt: any;
+    containerArrivalPlannedDt: any;
+    containerArrivalActualDt: any;
+    containerLoadingPlannedDt: any;
+    containerLoadingActualDt: any;
+    originETDPlannedDt: any;
+    originETDActualDt: any;
+    port1ArrivalPlannedDT: any;
+    port1ArrivalActualDT: any;
+    port1DeparturePlannedDt: any;
+    Port1DepartureActualDT: any;
+    port2ArrivalPlannedDT: any;
+    port2ArrivalActualDT: any;
+    port2DeparturePlannedDt: any;
+    Port2DepartureActualDT: any;
+    port3ArrivalPlannedDT: any;
+    port3ArrivalActualDT: any;
+    port3DeparturePlannedDt: any;
+    Port3DepartureActualDT: any;
+    destinationETAPlannedDt: any;
+    destinationETAActualDt: any;
+    containerUnloadingPlannedDT: any;
+    containerUnloadingActualDt: any;
+    containerScanPlnnedDt: any;
+    containerScanActualDt: any;
+    containerRelasePlannedDt: any;
+    containerRelaseActualDt: any;
+    containerPickupPlannedDt: any;
+    containerPickupActualDt: any;
+    containerDeliveryPlannedDt: any;
+    containerDeliveryActualDt: any;
+    containerReturnPlannedDt: any;
+    containerReturnActualDt: any;
+  };
 
   shipper: any;
   consignee: any;

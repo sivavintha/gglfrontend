@@ -29,6 +29,8 @@ import { Navigate, useNavigate } from "react-router";
 import AddContainer from "./AddContainer";
 import AddSellRate from "./AddSellRate";
 import AddBuyRate from "./AddBuyRate";
+import AddVesselSchedule from "./AddVesselSchedule";
+import AddEvent from "./AddEvent";
 
 const BookingList: React.FC = () => {
   const theme = useTheme();
@@ -89,6 +91,14 @@ const BookingList: React.FC = () => {
 
   const editBuyrate = (id: string) => {
     navigate("/addbuyrate", { state: { id: id } });
+  };
+
+  const editSchedule = (id: string) => {
+    navigate("/addvesselschedule", { state: { id: id } });
+  };
+
+  const editEvents = (id: string) => {
+    navigate("/addevents", { state: { id: id } });
   };
 
   const viewBooking = (id: string) => {
@@ -213,6 +223,18 @@ const BookingList: React.FC = () => {
           onClick={() => editBuyrate(params.id)}
           showInMenu
         />,
+        <GridActionsCellItem
+          icon={<Edit />}
+          label="Edit Schedule"
+          onClick={() => editSchedule(params.id)}
+          showInMenu
+        />,
+        <GridActionsCellItem
+          icon={<Edit />}
+          label="Edit Events"
+          onClick={() => editEvents(params.id)}
+          showInMenu
+        />
       ],
     },
   ];
@@ -239,6 +261,8 @@ const BookingList: React.FC = () => {
             <Tab label=" Container Details" />
             <Tab label=" Sell Rate" />
             <Tab label=" Buy Rate" />
+            <Tab label=" Schedule" />
+            <Tab label=" Events" />
           </Tabs>
         </Box>
         <SwipeableViews
@@ -263,6 +287,12 @@ const BookingList: React.FC = () => {
           </TabPanel>
           <TabPanel value={value} index={4}>
             <AddBuyRate />
+          </TabPanel>
+          <TabPanel value={value} index={5}>
+            <AddVesselSchedule />
+          </TabPanel>
+          <TabPanel value={value} index={6}>
+            <AddEvent />
           </TabPanel>
         </SwipeableViews>
       </Box>

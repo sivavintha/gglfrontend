@@ -17,6 +17,7 @@ import {
   TContainerType,
   TBasisType,
   TCurrency,
+  TMovementType
 } from "../Types";
 
 //STATE INTERFACEs
@@ -130,6 +131,13 @@ export interface IContainerTypeState {
   containerTypes: TContainerType[];
   filteredContainerTypes: TContainerType[];
   currentContainerTypes: TContainerType | null;
+  status: any;
+}
+
+export interface IMovementTypeState {
+  movementTypes: TMovementType[];
+  filteredMovementTypes: TMovementType[];
+  currentMovementTypes: TMovementType | null;
   status: any;
 }
 
